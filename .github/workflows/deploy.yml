@@ -1,0 +1,68 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+
+env:
+  FLUTTER_VERSION: "3.27.2"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: "stable"
+
+      - name: Dependencies
+        run: flutter pub get
+
+      - name: Build
+        run: flutter build web
+
+      - name: Upload Build
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-result
+          path: build/web
+
+  commit:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Clear Current Directory
+        run: rm -rf ./*
+
+      - name: Clear .github Directory
+        run: rm -rf .github
+
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: web-result
+          path: ./web-result
+
+      - name: Move Build Files to Root
+        run: mv ./web-result/* ./
+
+      - name: Clean Up Temporary Directory
+        run: rm -rf ./web-result
+
+      - name: Commit and Push Changes
+        uses: EndBug/add-and-commit@v9
+        with:
+          default_author: github_actions
+          new_branch: deploy
+          push: origin deploy --force
