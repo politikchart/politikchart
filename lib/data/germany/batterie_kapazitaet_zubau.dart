@@ -7,12 +7,6 @@ const batterieKapazitaetZubau = ChartData(
   ],
   yLabel: 'GWh',
   bars: [
-    ChartBar(x: 2000, y: 0.0039),
-    ChartBar(x: 2001, y: 0.0),
-    ChartBar(x: 2002, y: 0.0002),
-    ChartBar(x: 2003, y: 0.0001),
-    ChartBar(x: 2004, y: 0.0003),
-    ChartBar(x: 2005, y: 0.0001),
     ChartBar(x: 2006, y: 0.0002),
     ChartBar(x: 2007, y: 0.0003),
     ChartBar(x: 2008, y: 0.001),

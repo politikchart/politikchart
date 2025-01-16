@@ -64,7 +64,7 @@ class MyApp extends StatelessWidget {
 
 enum ChartType {
   arbeitslosenQuote('Arbeitslosenquote'),
-  batterySpeicherKapazitaetZubau('Batterie Speicher Kapazität Zubau'),
+  batteryKapazitaetZubau('Batteriekapazität Zubau'),
   benzinPreis('Benzinpreis (E5)'),
   stromPreis('Strompreis'),
   solarLeistungZubau('Solar Leistung Zubau'),
@@ -80,7 +80,7 @@ enum ChartType {
       case ChartType.arbeitslosenQuote:
         await arbeitslosen_quote.loadLibrary();
         return arbeitslosen_quote.arbeitslosenQuote;
-      case ChartType.batterySpeicherKapazitaetZubau:
+      case ChartType.batteryKapazitaetZubau:
         await batterie_kapazitaet_zubau.loadLibrary();
         return batterie_kapazitaet_zubau.batterieKapazitaetZubau;
       case ChartType.benzinPreis:
