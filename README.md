@@ -1,7 +1,6 @@
 # PolitikChart
 
 PolitikChart is an open-source web application that aims to visualize the societal and political impact of governing parties.
-Using bar charts, the application provides users with a detailed, interactive view of various aspects of society in a political context.
 
 Website: https://politikchart.de
 
