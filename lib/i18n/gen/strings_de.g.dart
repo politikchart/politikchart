@@ -34,6 +34,7 @@ class TranslationsDe implements Translations {
 
 	// Translations
 	@override String get showGovernment => 'Regierung anzeigen';
+	@override String get animations => 'Animationen';
 }
 
 /// Flat map(s) containing all translations.
@@ -42,6 +43,7 @@ extension on TranslationsDe {
 	dynamic _flatMapFunction(String path) {
 		switch (path) {
 			case 'showGovernment': return 'Regierung anzeigen';
+			case 'animations': return 'Animationen';
 			default: return null;
 		}
 	}

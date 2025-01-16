@@ -38,6 +38,7 @@ class Translations implements BaseTranslations<AppLocale, Translations> {
 
 	// Translations
 	String get showGovernment => 'Show Government';
+	String get animations => 'Animations';
 }
 
 /// Flat map(s) containing all translations.
@@ -46,6 +47,7 @@ extension on Translations {
 	dynamic _flatMapFunction(String path) {
 		switch (path) {
 			case 'showGovernment': return 'Show Government';
+			case 'animations': return 'Animations';
 			default: return null;
 		}
 	}

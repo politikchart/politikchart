@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'dart:ui' as ui;
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
@@ -34,11 +35,13 @@ class Chart extends StatefulWidget {
   final ChartData data;
   final bool showGovernment;
   final bool governmentDelay;
+  final bool animate;
 
   const Chart({
     required this.data,
     required this.showGovernment,
     required this.governmentDelay,
+    required this.animate,
   });
 
   @override
@@ -63,14 +66,9 @@ class _ChartState extends State<Chart> {
         _ when sizingInformation.maxWidth < 1200 => 10.0,
         _ => 15.0,
       };
-      final widthPerBar = (sizingInformation.maxWidth -
-              gap * (widget.data.bars.length - 1) -
-              padLeft -
-              padRight) /
-          widget.data.bars.length;
+      final widthPerBar = (sizingInformation.maxWidth - gap * (widget.data.bars.length - 1) - padLeft - padRight) / widget.data.bars.length;
 
-      final maxY =
-          widget.data.bars.map((bar) => bar.y).reduce((a, b) => a > b ? a : b);
+      final maxY = widget.data.bars.map((bar) => bar.y).reduce((a, b) => a > b ? a : b);
       final maxBarHeight = sizingInformation.maxHeight - padBottom - padTop;
 
       final ySteps = switch (maxY) {
@@ -84,8 +82,7 @@ class _ChartState extends State<Chart> {
       final colorScheme = Theme.of(context).colorScheme;
       const textHeight = 20.0;
 
-      final valueWidth =
-          getTextWidth(numberFormat.format(widget.data.bars.last.y));
+      final valueWidth = getTextWidth(numberFormat.format(widget.data.bars.last.y));
       final valueFormatter = valueWidth > widthPerBar
           ? widget.data.bars.last.y < 2
               ? numberFormatOnlyDecimals
@@ -130,10 +127,7 @@ class _ChartState extends State<Chart> {
             final bar = entry.value;
 
             return Positioned(
-              left: padLeft +
-                  index * widthPerBar +
-                  index * gap -
-                  (xLabelOnlyEven ? widthPerBar / 2 : 0),
+              left: padLeft + index * widthPerBar + index * gap - (xLabelOnlyEven ? widthPerBar / 2 : 0),
               bottom: 0,
               child: SizedBox(
                 width: xLabelOnlyEven ? widthPerBar * 2 : widthPerBar,
@@ -190,15 +184,17 @@ class _ChartState extends State<Chart> {
                 endYear: widget.data.bars.last.x,
                 governments: widget.data.governmentProvider.governments,
                 governmentDelay: widget.governmentDelay,
+                animate: widget.animate,
               ),
             ),
 
           // bars
-          ...widget.data.bars.asMap().entries.map((entry) {
+          ...widget.data.bars.asMap().entries.mapIndexed((index, entry) {
             final index = entry.key;
             final bar = entry.value;
 
             return Positioned(
+              key: ValueKey('${widget.data.hashCode}+${bar.x}'),
               left: padLeft + index * widthPerBar + index * gap,
               bottom: padBottom + 1,
               width: widthPerBar,
@@ -218,7 +214,17 @@ class _ChartState extends State<Chart> {
                     ),
                   ),
                 ),
-              ),
+              ).let((w) {
+                if (widget.animate) {
+                  return w.animate(delay: Duration(milliseconds: index * 10)).scaleY(
+                        duration: const Duration(milliseconds: 300),
+                        alignment: Alignment.bottomCenter,
+                        curve: Curves.easeOutCubic,
+                      );
+                } else {
+                  return w;
+                }
+              }),
             );
           }),
         ],
@@ -234,6 +240,7 @@ class _Government extends StatelessWidget {
   final int endYear;
   final List<Government> governments;
   final bool governmentDelay;
+  final bool animate;
 
   const _Government({
     required this.barWidth,
@@ -242,6 +249,7 @@ class _Government extends StatelessWidget {
     required this.endYear,
     required this.governments,
     required this.governmentDelay,
+    required this.animate,
   });
 
   @override
@@ -256,8 +264,7 @@ class _Government extends StatelessWidget {
       }
 
       final govEndYear = min(gov.end?.year ?? endYear, endYear);
-      final width = (govEndYear - currYear + 1) * barWidth +
-          (govEndYear - currYear) * barGap;
+      final width = (govEndYear - currYear + 1) * barWidth + (govEndYear - currYear) * barGap;
 
       list.add(Column(
         children: [
@@ -273,10 +280,13 @@ class _Government extends StatelessWidget {
                 ),
                 const SizedBox(height: 10),
               ],
-            ).animate().fade(
-                delay: governmentDelay
-                    ? const Duration(milliseconds: 1000)
-                    : const Duration(milliseconds: 500)),
+            ).let((w) {
+              if (animate) {
+                return w.animate().fade(delay: governmentDelay ? const Duration(milliseconds: 1000) : const Duration(milliseconds: 500));
+              } else {
+                return w;
+              }
+            }),
           ),
           Expanded(
             child: Column(
@@ -287,17 +297,17 @@ class _Government extends StatelessWidget {
                       width: width,
                     ))),
               ],
-            )
-                .animate(
-                    delay: governmentDelay
-                        ? const Duration(milliseconds: 250)
-                        : Duration.zero)
-                .fade()
-                .scaleY(
-                  duration: const Duration(milliseconds: 500),
-                  alignment: Alignment.bottomCenter,
-                  curve: Curves.easeOutCubic,
-                ),
+            ).let((w) {
+              if (animate) {
+                return w.animate(delay: governmentDelay ? const Duration(milliseconds: 500) : Duration.zero).fade().scaleY(
+                      duration: const Duration(milliseconds: 500),
+                      alignment: Alignment.bottomCenter,
+                      curve: Curves.easeOutCubic,
+                    );
+              } else {
+                return w;
+              }
+            }),
           ),
         ],
       ));

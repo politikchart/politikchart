@@ -8,6 +8,7 @@ environment:
   sdk: ^3.6.1
 
 dependencies:
+  collection: 1.19.0
   flutter:
     sdk: flutter
   flutter_animate: 4.5.2

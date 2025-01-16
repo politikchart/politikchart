@@ -11,6 +11,7 @@ import 'package:politikchart/data/germany/strom_preis.dart'
 import 'package:politikchart/data/germany/windkraft_leistung_genehmigung.dart'
     deferred as windkraft_leistung_genehmigung;
 import 'package:politikchart/i18n/gen/strings.g.dart';
+import 'package:politikchart/utils/link.dart';
 import 'package:politikchart/widgets/chart/chart.dart';
 import 'package:refena_flutter/refena_flutter.dart';
 
@@ -98,6 +99,7 @@ class _HomePageState extends State<HomePage> {
   ChartData? chartData;
   bool showGovernment = true;
   bool governmentDelay = true;
+  bool animate = true;
 
   @override
   void initState() {
@@ -150,29 +152,48 @@ class _HomePageState extends State<HomePage> {
                     data: chartData!,
                     showGovernment: showGovernment,
                     governmentDelay: governmentDelay,
+                    animate: animate,
                   ),
                 ),
               ),
               const SizedBox(height: 50),
-              Center(
-                child: SizedBox(
-                  width: 300,
-                  child: SwitchListTile(
-                    title: Text(t.showGovernment),
-                    value: showGovernment,
-                    onChanged: (value) {
-                      setState(() {
-                        showGovernment = value;
-                        governmentDelay = false;
-                      });
-                    },
-                  ),
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 1200),
+                child: Wrap(
+                  alignment: WrapAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: 300,
+                      child: SwitchListTile(
+                        title: Text(t.showGovernment),
+                        value: showGovernment,
+                        onChanged: (value) {
+                          setState(() {
+                            showGovernment = value;
+                            governmentDelay = false;
+                          });
+                        },
+                      ),
+                    ),
+                    SizedBox(
+                      width: 300,
+                      child: SwitchListTile(
+                        title: Text(t.animations),
+                        value: animate,
+                        onChanged: (value) {
+                          setState(() {
+                            animate = value;
+                          });
+                        },
+                      ),
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(height: 50),
               Center(
                 child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 800),
+                  constraints: const BoxConstraints(maxWidth: 1200),
                   child: Wrap(
                     children: [
                       for (final type in ChartType.values)
@@ -195,6 +216,14 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ),
+              const SizedBox(height: 50),
+              Center(
+                child: TextButton.icon(
+                  onPressed: () => openLink('https://github.com/politikchart/politikchart'),
+                  icon: const Icon(Icons.open_in_new),
+                  label: Text('Github'),
+                ),
+              )
             ],
           ),
           Positioned(
