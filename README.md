@@ -1,16 +1,16 @@
-# politikchart
+# PolitikChart
 
-A new Flutter project.
+PolitikChart is an open-source web application that aims to visualize the societal and political impact of governing parties.
+Using bar charts, the application provides users with a detailed, interactive view of various aspects of society in a political context.
+
+Website: https://politikchart.de
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+To build the project from source, follow these steps:
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+1. Clone the repository
+2. Install [Flutter](https://flutter.dev/docs/get-started/install)
+3. Run `flutter pub get` to install dependencies
+4. Run `flutter run` to build and run the project
+5. To build a release version, run `flutter build web`
