@@ -57,7 +57,7 @@ class _ChartState extends State<Chart> {
     final numberFormatOnlyDecimals = NumberFormat('0.00', locale);
 
     return LayoutBuilder(builder: (context, sizingInformation) {
-      final padLeft = 70.0;
+      final padLeft = 50.0;
       final padRight = 10.0;
       final padBottom = 30.0;
       final padTop = 80.0;
@@ -92,6 +92,15 @@ class _ChartState extends State<Chart> {
       final yearWidth = getTextWidth(widget.data.bars.last.x.toString());
       const yearPadding = 2; // somehow the text needs additional padding
       final xLabelOnlyEven = yearWidth + yearPadding >= widthPerBar;
+
+      final barColor = switch(colorScheme.brightness) {
+        Brightness.light => Colors.cyan.shade900,
+        Brightness.dark => colorScheme.primary,
+      };
+      final barValueColor = switch(colorScheme.brightness) {
+        Brightness.light => colorScheme.onPrimary,
+        Brightness.dark => colorScheme.onPrimary,
+      };
 
       return Stack(
         children: [
@@ -200,7 +209,7 @@ class _ChartState extends State<Chart> {
               width: widthPerBar,
               height: (bar.y / maxY) * maxBarHeight,
               child: Container(
-                color: colorScheme.primary,
+                color: barColor,
                 padding: const EdgeInsets.only(top: 5),
                 child: Align(
                   alignment: Alignment.topCenter,
@@ -209,7 +218,7 @@ class _ChartState extends State<Chart> {
                       padding: const EdgeInsets.symmetric(horizontal: 2),
                       child: Text(
                         valueFormatter.format(bar.y),
-                        style: TextStyle(color: colorScheme.onPrimary),
+                        style: TextStyle(color: barValueColor),
                       ),
                     ),
                   ),

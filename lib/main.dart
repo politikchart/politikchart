@@ -129,73 +129,79 @@ class _HomePageState extends State<HomePage> {
               Center(
                 child: Text('PolitikChart', style: Theme.of(context).textTheme.headlineLarge),
               ),
-              const SizedBox(height: 50),
-              const SizedBox(height: 50),
-              Center(
-                child: Text(chartType.label, style: Theme.of(context).textTheme.titleLarge),
-              ),
-              const SizedBox(height: 20),
-              Center(
-                child: SizedBox(
-                  width: 1200,
-                  height: 600,
-                  child: chartData == null
-                      ? Center(
-                          child: const CircularProgressIndicator(),
-                        )
-                      : Chart(
-                          data: chartData!,
-                          showGovernment: showGovernment,
-                          governmentDelay: governmentDelay,
-                          animate: animate,
-                        ),
-                ),
-              ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 100),
               Center(
                 child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 1100),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Wrap(
-                          alignment: WrapAlignment.start,
-                          spacing: 10,
-                          runSpacing: 10,
-                          children: [
-                            LabeledCheckbox(
-                              label: t.showGovernment,
-                              value: showGovernment,
-                              onChanged: (value) {
-                                setState(() {
-                                  showGovernment = value;
-                                  governmentDelay = false;
-                                });
-                              },
-                            ),
-                            LabeledCheckbox(
-                              label: t.animations,
-                              value: animate,
-                              onChanged: (value) {
-                                setState(() {
-                                  animate = value;
-                                });
-                              },
-                            ),
-                          ],
-                        ),
+                  constraints: const BoxConstraints(maxWidth: 1200),
+                  child: Card(
+                    elevation: 5,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 20, right: 20, bottom: 20),
+                      child: Column(
+                        children: [
+                          Text(chartType.label, style: Theme.of(context).textTheme.titleLarge),
+                          const SizedBox(height: 20),
+                          SizedBox(
+                            width: 1200,
+                            height: 600,
+                            child: chartData == null
+                                ? Center(
+                                    child: const CircularProgressIndicator(),
+                                  )
+                                : Chart(
+                                    data: chartData!,
+                                    showGovernment: showGovernment,
+                                    governmentDelay: governmentDelay,
+                                    animate: animate,
+                                  ),
+                          ),
+                          const SizedBox(height: 20),
+                          Row(
+                            children: [
+                              const SizedBox(width: 30),
+                              Expanded(
+                                child: Wrap(
+                                  alignment: WrapAlignment.start,
+                                  spacing: 10,
+                                  runSpacing: 10,
+                                  children: [
+                                    LabeledCheckbox(
+                                      label: t.showGovernment,
+                                      value: showGovernment,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          showGovernment = value;
+                                          governmentDelay = false;
+                                        });
+                                      },
+                                    ),
+                                    LabeledCheckbox(
+                                      label: t.animations,
+                                      value: animate,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          animate = value;
+                                        });
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              TextButton.icon(
+                                onPressed: () async {
+                                  await showDialog(
+                                    context: context,
+                                    builder: (context) => SourcesDialog(chartData!.sources),
+                                  );
+                                },
+                                icon: const Icon(Icons.info),
+                                label: Text(t.sources),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
-                      TextButton.icon(
-                        onPressed: () async {
-                          await showDialog(
-                            context: context,
-                            builder: (context) => SourcesDialog(chartData!.sources),
-                          );
-                        },
-                        icon: const Icon(Icons.info),
-                        label: Text(t.sources),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               ),
