@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:politikchart/data/germany/arbeitslosen_quote.dart' deferred as arbeitslosen_quote;
@@ -7,9 +8,11 @@ import 'package:politikchart/data/germany/strom_preis.dart' deferred as strom_pr
 import 'package:politikchart/data/germany/windkraft_leistung_genehmigung.dart' deferred as windkraft_leistung_genehmigung;
 import 'package:politikchart/i18n/gen/strings.g.dart';
 import 'package:politikchart/utils/link.dart';
+import 'package:politikchart/utils/url.dart';
 import 'package:politikchart/widgets/chart/chart.dart';
 import 'package:politikchart/widgets/dialogs/sources_dialog.dart';
 import 'package:politikchart/widgets/input/labeled_checkbox.dart';
+import 'package:recase/recase.dart';
 import 'package:refena_flutter/refena_flutter.dart';
 
 void main() {
@@ -47,6 +50,10 @@ class MyApp extends StatelessWidget {
       supportedLocales: AppLocaleUtils.supportedLocales,
       localizationsDelegates: GlobalMaterialLocalizations.delegates,
       home: const HomePage(),
+      routes: {
+        for (final chart in ChartType.values)
+          '/de/${ReCase(chart.name).paramCase}': (context) => HomePage(),
+      },
     );
   }
 }
@@ -102,7 +109,16 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
-    _loadChart(chartType);
+    // e.g. /de/arbeitslosen-quote
+    final url = getBrowserUrl();
+    if (url != null) {
+      final chart = ChartType.values.firstWhereOrNull((e) => '/de/${ReCase(e.name).paramCase}' == url);
+      if (chart != null) {
+        _loadChart(chart);
+      }
+    } else {
+      _loadChart(chartType);
+    }
   }
 
   void _loadChart(ChartType chart) async {
@@ -112,6 +128,8 @@ class _HomePageState extends State<HomePage> {
     });
 
     final data = await chart.loadChartData();
+
+    setBrowserUrl(title: chart.label, url: '/de/${ReCase(chart.name).paramCase}');
 
     setState(() {
       chartData = data;

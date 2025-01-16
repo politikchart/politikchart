@@ -15,6 +15,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   intl: 0.19.0
+  recase: 4.1.0
   refena_flutter: 2.1.1
   slang: 4.4.1
   slang_flutter: 4.4.0
