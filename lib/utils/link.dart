@@ -2,5 +2,5 @@
 import 'dart:js' as js;
 
 void openLink(String url, {bool newTab = true}) {
-  js.context.callMethod('open', ['https://github.com/politikchart/politikchart', newTab ? '_blank' : '_self']);
+  js.context.callMethod('open', [url, newTab ? '_blank' : '_self']);
 }

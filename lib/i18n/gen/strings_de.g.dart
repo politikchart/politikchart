@@ -35,6 +35,7 @@ class TranslationsDe implements Translations {
 	// Translations
 	@override String get showGovernment => 'Regierung anzeigen';
 	@override String get animations => 'Animationen';
+	@override String get sources => 'Quellen';
 }
 
 /// Flat map(s) containing all translations.
@@ -44,6 +45,7 @@ extension on TranslationsDe {
 		switch (path) {
 			case 'showGovernment': return 'Regierung anzeigen';
 			case 'animations': return 'Animationen';
+			case 'sources': return 'Quellen';
 			default: return null;
 		}
 	}

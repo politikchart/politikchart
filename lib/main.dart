@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:politikchart/data/germany/arbeitslosen_quote.dart'
-deferred as arbeitslosen_quote;
-import 'package:politikchart/data/germany/benzin_preis.dart'
-deferred as benzin_preis;
-import 'package:politikchart/data/germany/solar_leistung_zubau.dart'
-    deferred as solar_leistung_zubau;
-import 'package:politikchart/data/germany/strom_preis.dart'
-    deferred as strom_preis;
-import 'package:politikchart/data/germany/windkraft_leistung_genehmigung.dart'
-    deferred as windkraft_leistung_genehmigung;
+import 'package:politikchart/data/germany/arbeitslosen_quote.dart' deferred as arbeitslosen_quote;
+import 'package:politikchart/data/germany/benzin_preis.dart' deferred as benzin_preis;
+import 'package:politikchart/data/germany/solar_leistung_zubau.dart' deferred as solar_leistung_zubau;
+import 'package:politikchart/data/germany/strom_preis.dart' deferred as strom_preis;
+import 'package:politikchart/data/germany/windkraft_leistung_genehmigung.dart' deferred as windkraft_leistung_genehmigung;
 import 'package:politikchart/i18n/gen/strings.g.dart';
 import 'package:politikchart/utils/link.dart';
 import 'package:politikchart/widgets/chart/chart.dart';
+import 'package:politikchart/widgets/dialogs/sources_dialog.dart';
+import 'package:politikchart/widgets/input/labeled_checkbox.dart';
 import 'package:refena_flutter/refena_flutter.dart';
 
 void main() {
@@ -130,14 +127,12 @@ class _HomePageState extends State<HomePage> {
             children: [
               const SizedBox(height: 50),
               Center(
-                child: Text('Politik Chart',
-                    style: Theme.of(context).textTheme.headlineMedium),
+                child: Text('PolitikChart', style: Theme.of(context).textTheme.headlineLarge),
               ),
               const SizedBox(height: 50),
               const SizedBox(height: 50),
               Center(
-                child: Text(chartType.label,
-                    style: Theme.of(context).textTheme.titleMedium),
+                child: Text(chartType.label, style: Theme.of(context).textTheme.titleLarge),
               ),
               const SizedBox(height: 20),
               Center(
@@ -146,54 +141,68 @@ class _HomePageState extends State<HomePage> {
                   height: 600,
                   child: chartData == null
                       ? Center(
-                    child: const CircularProgressIndicator(),
-                  )
+                          child: const CircularProgressIndicator(),
+                        )
                       : Chart(
-                    data: chartData!,
-                    showGovernment: showGovernment,
-                    governmentDelay: governmentDelay,
-                    animate: animate,
-                  ),
+                          data: chartData!,
+                          showGovernment: showGovernment,
+                          governmentDelay: governmentDelay,
+                          animate: animate,
+                        ),
                 ),
               ),
-              const SizedBox(height: 50),
-              ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 1200),
-                child: Wrap(
-                  alignment: WrapAlignment.center,
-                  children: [
-                    SizedBox(
-                      width: 300,
-                      child: SwitchListTile(
-                        title: Text(t.showGovernment),
-                        value: showGovernment,
-                        onChanged: (value) {
-                          setState(() {
-                            showGovernment = value;
-                            governmentDelay = false;
-                          });
-                        },
+              const SizedBox(height: 20),
+              Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 1100),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Wrap(
+                          alignment: WrapAlignment.start,
+                          spacing: 10,
+                          runSpacing: 10,
+                          children: [
+                            LabeledCheckbox(
+                              label: t.showGovernment,
+                              value: showGovernment,
+                              onChanged: (value) {
+                                setState(() {
+                                  showGovernment = value;
+                                  governmentDelay = false;
+                                });
+                              },
+                            ),
+                            LabeledCheckbox(
+                              label: t.animations,
+                              value: animate,
+                              onChanged: (value) {
+                                setState(() {
+                                  animate = value;
+                                });
+                              },
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    SizedBox(
-                      width: 300,
-                      child: SwitchListTile(
-                        title: Text(t.animations),
-                        value: animate,
-                        onChanged: (value) {
-                          setState(() {
-                            animate = value;
-                          });
+                      TextButton.icon(
+                        onPressed: () async {
+                          await showDialog(
+                            context: context,
+                            builder: (context) => SourcesDialog(chartData!.sources),
+                          );
                         },
+                        icon: const Icon(Icons.info),
+                        label: Text(t.sources),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
               const SizedBox(height: 50),
               Center(
                 child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 1200),
+                  constraints: const BoxConstraints(maxWidth: 1100),
                   child: Wrap(
                     children: [
                       for (final type in ChartType.values)
@@ -201,12 +210,8 @@ class _HomePageState extends State<HomePage> {
                           padding: const EdgeInsets.all(8),
                           child: TextButton(
                             style: FilledButton.styleFrom(
-                              backgroundColor: chartType == type
-                                  ? Theme.of(context).colorScheme.primary
-                                  : null,
-                              foregroundColor: chartType == type
-                                  ? Theme.of(context).colorScheme.onPrimary
-                                  : null,
+                              backgroundColor: chartType == type ? Theme.of(context).colorScheme.primary : null,
+                              foregroundColor: chartType == type ? Theme.of(context).colorScheme.onPrimary : null,
                             ),
                             onPressed: () => _loadChart(type),
                             child: Text(type.label),
@@ -240,9 +245,7 @@ class _HomePageState extends State<HomePage> {
                   selected: {themeMode},
                   onSelectionChanged: (Set<ThemeMode> newSelection) {
                     if (newSelection.isNotEmpty) {
-                      ref
-                          .notifier(themeProvider)
-                          .setState((old) => newSelection.first);
+                      ref.notifier(themeProvider).setState((old) => newSelection.first);
                     }
                   },
                   segments: [

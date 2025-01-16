@@ -39,6 +39,7 @@ class Translations implements BaseTranslations<AppLocale, Translations> {
 	// Translations
 	String get showGovernment => 'Show Government';
 	String get animations => 'Animations';
+	String get sources => 'Sources';
 }
 
 /// Flat map(s) containing all translations.
@@ -48,6 +49,7 @@ extension on Translations {
 		switch (path) {
 			case 'showGovernment': return 'Show Government';
 			case 'animations': return 'Animations';
+			case 'sources': return 'Sources';
 			default: return null;
 		}
 	}
