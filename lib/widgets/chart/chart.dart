@@ -35,20 +35,20 @@ class _ChartState extends State<Chart> {
     final numberFormatRounded = NumberFormat('###,###', locale);
     final numberFormatOnlyDecimals = NumberFormat('0.00', locale);
 
-    return LayoutBuilder(builder: (context, sizingInformation) {
+    return LayoutBuilder(builder: (context, constraints) {
       final padLeft = 50.0;
       final padRight = 10.0;
       final padBottom = 30.0;
       final padTop = 80.0;
-      final gap = switch (sizingInformation.maxWidth) {
-        _ when sizingInformation.maxWidth < 800 => 5.0,
-        _ when sizingInformation.maxWidth < 1200 => 10.0,
+      final gap = switch (constraints.maxWidth) {
+        _ when constraints.maxWidth < 800 => 5.0,
+        _ when constraints.maxWidth < 1200 => 10.0,
         _ => 15.0,
       };
-      final widthPerBar = (sizingInformation.maxWidth - gap * (widget.data.bars.length - 1) - padLeft - padRight) / widget.data.bars.length;
+      final widthPerBar = (constraints.maxWidth - gap * (widget.data.bars.length - 1) - padLeft - padRight) / widget.data.bars.length;
 
       final maxY = widget.data.bars.map((bar) => bar.y).reduce((a, b) => a > b ? a : b);
-      final maxBarHeight = sizingInformation.maxHeight - padBottom - padTop;
+      final maxBarHeight = constraints.maxHeight - padBottom - padTop;
 
       final ySteps = switch (maxY) {
         _ when maxY < 15 => 1,
@@ -68,9 +68,11 @@ class _ChartState extends State<Chart> {
               : numberFormatRounded
           : numberFormat;
 
-      final yearWidth = getTextWidth(widget.data.bars.last.x.toString());
+      int xLabelModulo = 1;
       const yearPadding = 2; // somehow the text needs additional padding
-      final xLabelOnlyEven = yearWidth + yearPadding >= widthPerBar;
+      while (getTextWidth(widget.data.bars.last.x.toString()) >= (widthPerBar - yearPadding) * xLabelModulo) {
+        xLabelModulo += 1;
+      }
 
       final barColor = switch(colorScheme.brightness) {
         Brightness.light => Colors.cyan.shade900,
@@ -106,22 +108,19 @@ class _ChartState extends State<Chart> {
           ),
 
           // x-axis labels
-          ...widget.data.bars.asMap().entries.map((entry) {
-            if (xLabelOnlyEven && entry.key % 2 == 1) {
+          ...widget.data.bars.mapIndexed((index, bar) {
+            if (xLabelModulo != 1 && (index % xLabelModulo != 0 || (index + (xLabelModulo - 1)) >= widget.data.bars.length)) {
               return const SizedBox();
             }
 
-            final index = entry.key;
-            final bar = entry.value;
-
             return Positioned(
-              left: padLeft + index * widthPerBar + index * gap - (xLabelOnlyEven ? widthPerBar / 2 : 0),
+              left: padLeft + index * widthPerBar + index * gap,
               bottom: 0,
               child: SizedBox(
-                width: xLabelOnlyEven ? widthPerBar * 2 : widthPerBar,
+                width: widthPerBar * xLabelModulo + gap * (xLabelModulo - 1),
                 child: Text(
                   bar.x.toString(),
-                  textAlign: TextAlign.center,
+                  textAlign: xLabelModulo == 1 ? TextAlign.center : TextAlign.left,
                 ),
               ),
             );
@@ -258,6 +257,7 @@ class _Government extends StatelessWidget {
         children: [
           SizedBox(
             width: width,
+            height: 50,
             child: Column(
               children: [
                 FittedBox(

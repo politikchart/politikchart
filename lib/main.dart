@@ -2,12 +2,18 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:politikchart/data/germany/_parties.dart';
-import 'package:politikchart/data/germany/arbeitslosen_quote.dart' deferred as arbeitslosen_quote;
-import 'package:politikchart/data/germany/batterie_kapazitaet_zubau.dart' deferred as batterie_kapazitaet_zubau;
-import 'package:politikchart/data/germany/benzin_preis.dart' deferred as benzin_preis;
-import 'package:politikchart/data/germany/solar_leistung_zubau.dart' deferred as solar_leistung_zubau;
-import 'package:politikchart/data/germany/strom_preis.dart' deferred as strom_preis;
-import 'package:politikchart/data/germany/windkraft_leistung_genehmigung.dart' deferred as windkraft_leistung_genehmigung;
+import 'package:politikchart/data/germany/arbeitslosen_quote.dart'
+    deferred as arbeitslosen_quote;
+import 'package:politikchart/data/germany/batterie_kapazitaet_zubau.dart'
+    deferred as batterie_kapazitaet_zubau;
+import 'package:politikchart/data/germany/benzin_preis.dart'
+    deferred as benzin_preis;
+import 'package:politikchart/data/germany/solar_leistung_zubau.dart'
+    deferred as solar_leistung_zubau;
+import 'package:politikchart/data/germany/strom_preis.dart'
+    deferred as strom_preis;
+import 'package:politikchart/data/germany/windkraft_leistung_genehmigung.dart'
+    deferred as windkraft_leistung_genehmigung;
 import 'package:politikchart/data/party.dart';
 import 'package:politikchart/i18n/gen/strings.g.dart';
 import 'package:politikchart/utils/link.dart';
@@ -16,6 +22,7 @@ import 'package:politikchart/widgets/chart/chart.dart';
 import 'package:politikchart/widgets/chart/chart_data.dart';
 import 'package:politikchart/widgets/dialogs/sources_dialog.dart';
 import 'package:politikchart/widgets/input/labeled_checkbox.dart';
+import 'package:politikchart/widgets/input/theme_selector.dart';
 import 'package:recase/recase.dart';
 import 'package:refena_flutter/refena_flutter.dart';
 
@@ -26,8 +33,6 @@ void main() {
     child: TranslationProvider(child: const MyApp()),
   ));
 }
-
-final themeProvider = StateProvider((ref) => ThemeMode.system);
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -97,6 +102,8 @@ enum ChartType {
         return windkraft_leistung_genehmigung.windkraftLeistungGenehmigung;
     }
   }
+
+  String toUrl() => '/de/${ReCase(name).paramCase}';
 }
 
 class HomePage extends StatefulWidget {
@@ -120,7 +127,7 @@ class _HomePageState extends State<HomePage> {
     // e.g. /de/arbeitslosen-quote
     final url = getBrowserUrl();
     if (url != null) {
-      final chart = ChartType.values.firstWhereOrNull((e) => '/de/${ReCase(e.name).paramCase}' == url);
+      final chart = ChartType.values.firstWhereOrNull((e) => e.toUrl() == url);
       if (chart != null) {
         _loadChart(chart);
       }
@@ -137,7 +144,7 @@ class _HomePageState extends State<HomePage> {
 
     final data = await chart.loadChartData();
 
-    setBrowserUrl(title: chart.label, url: '/de/${ReCase(chart.name).paramCase}');
+    setBrowserUrl(title: chart.label, url: chart.toUrl());
 
     setState(() {
       chartData = data;
@@ -146,6 +153,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final displaySize = MediaQuery.sizeOf(context);
     return Scaffold(
       body: Stack(
         children: [
@@ -153,19 +161,27 @@ class _HomePageState extends State<HomePage> {
             children: [
               const SizedBox(height: 50),
               Center(
-                child: Text('PolitikChart', style: Theme.of(context).textTheme.headlineLarge),
+                child: Text('PolitikChart',
+                    style: Theme.of(context).textTheme.headlineLarge),
               ),
-              const SizedBox(height: 100),
+              SizedBox(
+                height: switch (displaySize.height) {
+                  < 1000 => 50,
+                  _ => 100,
+                },
+              ),
               Center(
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 1200),
                   child: Card(
                     elevation: 5,
                     child: Padding(
-                      padding: const EdgeInsets.only(top: 20, right: 20, bottom: 20),
+                      padding:
+                          const EdgeInsets.only(top: 20, right: 20, bottom: 20),
                       child: Column(
                         children: [
-                          Text(chartType.label, style: Theme.of(context).textTheme.titleLarge),
+                          Text(chartType.label,
+                              style: Theme.of(context).textTheme.titleLarge),
                           const SizedBox(height: 20),
                           SizedBox(
                             width: 1200,
@@ -176,7 +192,8 @@ class _HomePageState extends State<HomePage> {
                                   )
                                 : Chart(
                                     data: chartData!,
-                                    governmentProvider: GovernmentProvider(governments),
+                                    governmentProvider:
+                                        GovernmentProvider(governments),
                                     showGovernment: showGovernment,
                                     governmentDelay: governmentDelay,
                                     animate: animate,
@@ -218,7 +235,8 @@ class _HomePageState extends State<HomePage> {
                                 onPressed: () async {
                                   await showDialog(
                                     context: context,
-                                    builder: (context) => SourcesDialog(chartData!.sources),
+                                    builder: (context) =>
+                                        SourcesDialog(chartData!.sources),
                                   );
                                 },
                                 icon: const Icon(Icons.info),
@@ -243,8 +261,12 @@ class _HomePageState extends State<HomePage> {
                           padding: const EdgeInsets.all(8),
                           child: TextButton(
                             style: FilledButton.styleFrom(
-                              backgroundColor: chartType == type ? Theme.of(context).colorScheme.primary : null,
-                              foregroundColor: chartType == type ? Theme.of(context).colorScheme.onPrimary : null,
+                              backgroundColor: chartType == type
+                                  ? Theme.of(context).colorScheme.primary
+                                  : null,
+                              foregroundColor: chartType == type
+                                  ? Theme.of(context).colorScheme.onPrimary
+                                  : null,
                             ),
                             onPressed: () => _loadChart(type),
                             child: Text(type.label),
@@ -257,48 +279,31 @@ class _HomePageState extends State<HomePage> {
               const SizedBox(height: 50),
               Center(
                 child: TextButton.icon(
-                  onPressed: () => openLink('https://github.com/politikchart/politikchart'),
+                  onPressed: () =>
+                      openLink('https://github.com/politikchart/politikchart'),
                   icon: const Icon(Icons.open_in_new),
                   label: Text('Github'),
                 ),
-              )
+              ),
+              if (displaySize.width <= 800)
+                Padding(
+                  padding: const EdgeInsets.only(top: 20),
+                  child: Center(
+                    child: const ThemeSelector(),
+                  ),
+                ),
+              const SizedBox(height: 50),
             ],
           ),
-          Positioned(
-            top: 0,
-            right: 0,
-            child: Padding(
-              padding: const EdgeInsets.all(8),
-              child: Consumer(builder: (context, ref) {
-                final themeMode = ref.watch(themeProvider);
-                return SegmentedButton<ThemeMode>(
-                  multiSelectionEnabled: false,
-                  emptySelectionAllowed: false,
-                  showSelectedIcon: false,
-                  selected: {themeMode},
-                  onSelectionChanged: (Set<ThemeMode> newSelection) {
-                    if (newSelection.isNotEmpty) {
-                      ref.notifier(themeProvider).setState((old) => newSelection.first);
-                    }
-                  },
-                  segments: [
-                    ButtonSegment<ThemeMode>(
-                      value: ThemeMode.system,
-                      label: Icon(Icons.brightness_auto),
-                    ),
-                    ButtonSegment<ThemeMode>(
-                      value: ThemeMode.light,
-                      label: Icon(Icons.light_mode),
-                    ),
-                    ButtonSegment<ThemeMode>(
-                      value: ThemeMode.dark,
-                      label: Icon(Icons.dark_mode),
-                    ),
-                  ],
-                );
-              }),
+          if (displaySize.width > 800)
+            Positioned(
+              top: 0,
+              right: 0,
+              child: Padding(
+                padding: const EdgeInsets.all(8),
+                child: const ThemeSelector(),
+              ),
             ),
-          ),
         ],
       ),
     );
