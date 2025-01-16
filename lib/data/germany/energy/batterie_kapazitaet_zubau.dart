@@ -1,8 +1,9 @@
-import 'package:politikchart/widgets/chart/chart_data.dart';
+import 'package:politikchart/model/chart.dart';
 
-const batterieKapazitaetZubau = ChartData(
+const chartData = ChartData(
+  key: 'batterie-kapazitaet-zubau',
+  name: 'Batterie-Kapazität Zubau',
   sources: [
-    // using delta between 01.Dez and 01.Dez. of each year
     'https://scarica.isea.rwth-aachen.de/mastr/d/lA4kI2GVz/battery-status?orgId=1&from=now-20y&to=now%2B1M&viewPanel=39&inspect=39&inspectTab=data',
   ],
   yLabel: 'GWh',
@@ -24,7 +25,7 @@ const batterieKapazitaetZubau = ChartData(
     ChartBar(x: 2020, y: 0.8),
     ChartBar(x: 2021, y: 1.4),
     ChartBar(x: 2022, y: 2.2),
-    ChartBar(x: 2023, y: 6),
+    ChartBar(x: 2023, y: 6.0),
     ChartBar(x: 2024, y: 5.5),
   ],
 );

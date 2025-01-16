@@ -1,0 +1,31 @@
+- alias: 'Schwarz-Gelb'
+  parties: ['cdu', 'fdp']
+  start: 1994-11-10
+  end: 1998-10-26
+- alias: 'Rot-Grün'
+  parties: ['spd', 'greens']
+  start: 1998-10-26
+  end: 2002-10-17
+- alias: 'Rot-Grün'
+  parties: ['spd', 'greens']
+  start: 2002-10-17
+  end: 2005-10-18
+- alias: 'GroKo'
+  parties: ['cdu', 'spd']
+  start: 2005-10-18
+  end: 2009-10-27
+- alias: 'Schwarz-Gelb'
+  parties: ['cdu', 'fdp']
+  start: 2009-10-27
+  end: 2013-10-22
+- alias: 'GroKo'
+  parties: ['cdu', 'spd']
+  start: 2013-10-22
+  end: 2017-10-24
+- alias: 'GroKo'
+  parties: ['cdu', 'spd']
+  start: 2017-10-24
+  end: 2021-10-26
+- alias: 'Ampel'
+  parties: ['spd', 'greens', 'fdp']
+  start: 2021-10-26

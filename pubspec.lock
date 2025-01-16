@@ -176,14 +176,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.9.0"
-  recase:
-    dependency: "direct main"
-    description:
-      name: recase
-      sha256: e4eb4ec2dcdee52dcf99cb4ceabaffc631d7424ee55e56f280bc039737f89213
-      url: "https://pub.dev"
-    source: hosted
-    version: "4.1.0"
   refena:
     dependency: transitive
     description:
@@ -294,7 +286,7 @@ packages:
     source: hosted
     version: "1.1.1"
   yaml:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: yaml
       sha256: b9da305ac7c39faa3f030eccd175340f968459dae4af175130b3fc47e40d76ce

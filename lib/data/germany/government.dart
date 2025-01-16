@@ -1,25 +1,27 @@
-import 'dart:ui';
-
-import 'package:politikchart/data/party.dart';
+import 'package:politikchart/model/party.dart';
 
 const cdu = Party(
+  key: 'cdu',
   name: 'CDU',
-  color: Color(0xFF000000),
+  color: RgbColor(0x000000),
 );
 
 const fdp = Party(
+  key: 'fdp',
   name: 'FDP',
-  color: Color(0xFFFFD500),
+  color: RgbColor(0xffd500),
 );
 
 const greens = Party(
+  key: 'greens',
   name: 'Grüne',
-  color: Color(0xFF64A844),
+  color: RgbColor(0x64a844),
 );
 
 const spd = Party(
+  key: 'spd',
   name: 'SPD',
-  color: Color(0xFFEB001F),
+  color: RgbColor(0xeb001f),
 );
 
 const governments = [

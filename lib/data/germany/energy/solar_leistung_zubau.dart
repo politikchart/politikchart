@@ -1,6 +1,8 @@
-import 'package:politikchart/widgets/chart/chart_data.dart';
+import 'package:politikchart/model/chart.dart';
 
-const solarLeistungZubau = ChartData(
+const chartData = ChartData(
+  key: 'solar-leistung-zubau',
+  name: 'Solarleistung Zubau',
   sources: [
     'https://strom-report.com/photovoltaik/',
   ],

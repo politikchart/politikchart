@@ -1,6 +1,8 @@
-import 'package:politikchart/widgets/chart/chart_data.dart';
+import 'package:politikchart/model/chart.dart';
 
-const arbeitslosenQuote = ChartData(
+const chartData = ChartData(
+  key: 'arbeitslosen-quote',
+  name: 'Arbeitslosenquote',
   sources: [
     'https://www.destatis.de/DE/Themen/Wirtschaft/Konjunkturindikatoren/Lange-Reihen/Arbeitsmarkt/lrarb003ga.html',
   ],

@@ -1,13 +1,19 @@
-import 'dart:ui';
-
 class Party {
+  final String key;
   final String name;
-  final Color color;
+  final RgbColor color;
 
   const Party({
+    required this.key,
     required this.name,
     required this.color,
   });
+}
+
+class RgbColor {
+  final int value;
+
+  const RgbColor(this.value);
 }
 
 class Government {
@@ -30,6 +36,11 @@ class Date {
   final int day;
 
   const Date(this.year, this.month, this.day);
+
+  Date.fromDateTime(DateTime dateTime)
+      : year = dateTime.year,
+        month = dateTime.month,
+        day = dateTime.day;
 }
 
 class GovernmentProvider {

@@ -1,6 +1,8 @@
-import 'package:politikchart/widgets/chart/chart_data.dart';
+import 'package:politikchart/model/chart.dart';
 
-const windkraftLeistungGenehmigung = ChartData(
+const chartData = ChartData(
+  key: 'windkraft-leistung-genehmigung',
+  name: 'Windkraft-Leistung Genehmigung',
   sources: [
     'https://www.fachagentur-windenergie.de/veroeffentlichungen/publikationen/',
     'https://www.fachagentur-windenergie.de/aktuelles/detail/rekord-jahr-bei-den-windenergie-genehmigungen/',

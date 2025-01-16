@@ -1,6 +1,8 @@
-import 'package:politikchart/widgets/chart/chart_data.dart';
+import 'package:politikchart/model/chart.dart';
 
-const benzinPreis = ChartData(
+const chartData = ChartData(
+  key: 'benzin-preis',
+  name: 'Benzin Preis (E5)',
   sources: [
     'https://de.statista.com/statistik/daten/studie/776/umfrage/durchschnittspreis-fuer-superbenzin-seit-dem-jahr-1972/',
   ],

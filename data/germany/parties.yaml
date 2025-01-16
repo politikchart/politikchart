@@ -1,0 +1,12 @@
+cdu:
+  name: 'CDU'
+  color: '000000'
+fdp:
+  name: 'FDP'
+  color: 'FFD500'
+greens:
+  name: 'Grüne'
+  color: '64A844'
+spd:
+  name: 'SPD'
+  color: 'EB001F'

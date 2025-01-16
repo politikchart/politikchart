@@ -5,8 +5,8 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
-import 'package:politikchart/data/party.dart';
-import 'package:politikchart/widgets/chart/chart_data.dart';
+import 'package:politikchart/model/chart.dart';
+import 'package:politikchart/model/party.dart';
 
 class Chart extends StatefulWidget {
   final ChartData data;
@@ -281,7 +281,7 @@ class _Government extends StatelessWidget {
               children: [
                 ...gov.parties.map((p) => Expanded(
                         child: Container(
-                      color: p.color.withValues(alpha: 0.5),
+                      color: p.color.color.withValues(alpha: 0.5),
                       width: width,
                     ))),
               ],
@@ -326,4 +326,8 @@ double getTextWidth(String text, {TextStyle? style}) {
 
 extension ObjectExt<T> on T {
   R let<R>(R Function(T that) op) => op(this);
+}
+
+extension on RgbColor {
+  Color get color => Color(0xFF000000 | value);
 }

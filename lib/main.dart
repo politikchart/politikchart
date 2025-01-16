@@ -1,29 +1,17 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:politikchart/data/germany/_parties.dart';
-import 'package:politikchart/data/germany/arbeitslosen_quote.dart'
-    deferred as arbeitslosen_quote;
-import 'package:politikchart/data/germany/batterie_kapazitaet_zubau.dart'
-    deferred as batterie_kapazitaet_zubau;
-import 'package:politikchart/data/germany/benzin_preis.dart'
-    deferred as benzin_preis;
-import 'package:politikchart/data/germany/solar_leistung_zubau.dart'
-    deferred as solar_leistung_zubau;
-import 'package:politikchart/data/germany/strom_preis.dart'
-    deferred as strom_preis;
-import 'package:politikchart/data/germany/windkraft_leistung_genehmigung.dart'
-    deferred as windkraft_leistung_genehmigung;
-import 'package:politikchart/data/party.dart';
+import 'package:politikchart/data/germany/charts.dart';
+import 'package:politikchart/data/germany/government.dart';
 import 'package:politikchart/i18n/gen/strings.g.dart';
+import 'package:politikchart/model/chart.dart';
+import 'package:politikchart/model/party.dart';
 import 'package:politikchart/utils/link.dart';
 import 'package:politikchart/utils/url.dart';
 import 'package:politikchart/widgets/chart/chart.dart';
-import 'package:politikchart/widgets/chart/chart_data.dart';
 import 'package:politikchart/widgets/dialogs/sources_dialog.dart';
 import 'package:politikchart/widgets/input/labeled_checkbox.dart';
 import 'package:politikchart/widgets/input/theme_selector.dart';
-import 'package:recase/recase.dart';
 import 'package:refena_flutter/refena_flutter.dart';
 
 void main() {
@@ -60,50 +48,11 @@ class MyApp extends StatelessWidget {
       localizationsDelegates: GlobalMaterialLocalizations.delegates,
       home: const HomePage(),
       routes: {
-        for (final chart in ChartType.values)
-          '/de/${ReCase(chart.name).paramCase}': (context) => HomePage(),
+        for (final group in chartGroups)
+          for (final chart in group.chartKeys.keys) '/de/$chart': (context) => HomePage(),
       },
     );
   }
-}
-
-enum ChartType {
-  arbeitslosenQuote('Arbeitslosenquote'),
-  batteryKapazitaetZubau('Batteriekapazität Zubau'),
-  benzinPreis('Benzinpreis (E5)'),
-  stromPreis('Strompreis'),
-  solarLeistungZubau('Solar Leistung Zubau'),
-  windkraftLeistungGenehmigung('Windkraft Leistung Genehmigung'),
-  ;
-
-  const ChartType(this.label);
-
-  final String label;
-
-  Future<ChartData> loadChartData() async {
-    switch (this) {
-      case ChartType.arbeitslosenQuote:
-        await arbeitslosen_quote.loadLibrary();
-        return arbeitslosen_quote.arbeitslosenQuote;
-      case ChartType.batteryKapazitaetZubau:
-        await batterie_kapazitaet_zubau.loadLibrary();
-        return batterie_kapazitaet_zubau.batterieKapazitaetZubau;
-      case ChartType.benzinPreis:
-        await benzin_preis.loadLibrary();
-        return benzin_preis.benzinPreis;
-      case ChartType.solarLeistungZubau:
-        await solar_leistung_zubau.loadLibrary();
-        return solar_leistung_zubau.solarLeistungZubau;
-      case ChartType.stromPreis:
-        await strom_preis.loadLibrary();
-        return strom_preis.stromPreis;
-      case ChartType.windkraftLeistungGenehmigung:
-        await windkraft_leistung_genehmigung.loadLibrary();
-        return windkraft_leistung_genehmigung.windkraftLeistungGenehmigung;
-    }
-  }
-
-  String toUrl() => '/de/${ReCase(name).paramCase}';
 }
 
 class HomePage extends StatefulWidget {
@@ -114,7 +63,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  ChartType chartType = ChartType.values.first;
   ChartData? chartData;
   bool showGovernment = true;
   bool governmentDelay = true;
@@ -127,27 +75,30 @@ class _HomePageState extends State<HomePage> {
     // e.g. /de/arbeitslosen-quote
     final url = getBrowserUrl();
     if (url != null) {
-      final chart = ChartType.values.firstWhereOrNull((e) => e.toUrl() == url);
-      if (chart != null) {
-        _loadChart(chart);
+      final chartKey = url.replaceAll('/de/', '');
+      final group = chartGroups.firstWhereOrNull(
+        (e) => e.chartKeys.keys.contains(chartKey),
+      );
+      if (group != null) {
+        _loadChart(group, chartKey);
       }
     } else {
-      _loadChart(chartType);
+      _loadChart(chartGroups.first, chartGroups.first.chartKeys.keys.first);
     }
   }
 
-  void _loadChart(ChartType chart) async {
+  void _loadChart(LazyChartGroup group, String chartKey) async {
     setState(() {
-      chartType = chart;
+      chartData = null;
       governmentDelay = true;
     });
 
-    final data = await chart.loadChartData();
+    final charts = await group.load();
 
-    setBrowserUrl(title: chart.label, url: chart.toUrl());
+    setBrowserUrl(url: chartKey);
 
     setState(() {
-      chartData = data;
+      chartData = charts.firstWhere((e) => e.key == chartKey);
     });
   }
 
@@ -161,8 +112,7 @@ class _HomePageState extends State<HomePage> {
             children: [
               const SizedBox(height: 50),
               Center(
-                child: Text('PolitikChart',
-                    style: Theme.of(context).textTheme.headlineLarge),
+                child: Text('PolitikChart', style: Theme.of(context).textTheme.headlineLarge),
               ),
               SizedBox(
                 height: switch (displaySize.height) {
@@ -176,12 +126,10 @@ class _HomePageState extends State<HomePage> {
                   child: Card(
                     elevation: 5,
                     child: Padding(
-                      padding:
-                          const EdgeInsets.only(top: 20, right: 20, bottom: 20),
+                      padding: const EdgeInsets.only(top: 20, right: 20, bottom: 20),
                       child: Column(
                         children: [
-                          Text(chartType.label,
-                              style: Theme.of(context).textTheme.titleLarge),
+                          Text(chartData?.name ?? '', style: Theme.of(context).textTheme.titleLarge),
                           const SizedBox(height: 20),
                           SizedBox(
                             width: 1200,
@@ -192,8 +140,7 @@ class _HomePageState extends State<HomePage> {
                                   )
                                 : Chart(
                                     data: chartData!,
-                                    governmentProvider:
-                                        GovernmentProvider(governments),
+                                    governmentProvider: GovernmentProvider(governments),
                                     showGovernment: showGovernment,
                                     governmentDelay: governmentDelay,
                                     animate: animate,
@@ -235,8 +182,7 @@ class _HomePageState extends State<HomePage> {
                                 onPressed: () async {
                                   await showDialog(
                                     context: context,
-                                    builder: (context) =>
-                                        SourcesDialog(chartData!.sources),
+                                    builder: (context) => SourcesDialog(chartData!.sources),
                                   );
                                 },
                                 icon: const Icon(Icons.info),
@@ -250,37 +196,37 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ),
-              const SizedBox(height: 50),
-              Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 1100),
-                  child: Wrap(
-                    children: [
-                      for (final type in ChartType.values)
-                        Padding(
-                          padding: const EdgeInsets.all(8),
-                          child: TextButton(
-                            style: FilledButton.styleFrom(
-                              backgroundColor: chartType == type
-                                  ? Theme.of(context).colorScheme.primary
-                                  : null,
-                              foregroundColor: chartType == type
-                                  ? Theme.of(context).colorScheme.onPrimary
-                                  : null,
+              for (final group in chartGroups) ...[
+                const SizedBox(height: 50),
+                Center(
+                  child: Text(group.title, style: Theme.of(context).textTheme.titleLarge),
+                ),
+                Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 1100),
+                    child: Wrap(
+                      children: [
+                        for (final chart in group.chartKeys.entries)
+                          Padding(
+                            padding: const EdgeInsets.all(8),
+                            child: TextButton(
+                              style: FilledButton.styleFrom(
+                                backgroundColor: chart.key == chartData?.key ? Theme.of(context).colorScheme.primary : null,
+                                foregroundColor: chart.key == chartData?.key ? Theme.of(context).colorScheme.onPrimary : null,
+                              ),
+                              onPressed: () => _loadChart(group, chart.key),
+                              child: Text(chart.value),
                             ),
-                            onPressed: () => _loadChart(type),
-                            child: Text(type.label),
                           ),
-                        ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
+              ],
               const SizedBox(height: 50),
               Center(
                 child: TextButton.icon(
-                  onPressed: () =>
-                      openLink('https://github.com/politikchart/politikchart'),
+                  onPressed: () => openLink('https://github.com/politikchart/politikchart'),
                   icon: const Icon(Icons.open_in_new),
                   label: Text('Github'),
                 ),
@@ -308,4 +254,12 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+}
+
+extension on LazyChartGroup {
+  String get title => switch (key) {
+        'economy' => 'Wirtschaft',
+        'energy' => 'Energie',
+        _ => key,
+      };
 }

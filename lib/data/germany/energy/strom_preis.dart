@@ -1,6 +1,8 @@
-import 'package:politikchart/widgets/chart/chart_data.dart';
+import 'package:politikchart/model/chart.dart';
 
-const stromPreis = ChartData(
+const chartData = ChartData(
+  key: 'strom-preis',
+  name: 'Strompreis',
   sources: [
     'https://de.wikipedia.org/wiki/Strompreis',
     'https://www.bdew.de/service/daten-und-grafiken/bdew-strompreisanalyse/',
@@ -23,8 +25,8 @@ const stromPreis = ChartData(
     ChartBar(x: 2012, y: 25.89),
     ChartBar(x: 2013, y: 28.84),
     ChartBar(x: 2014, y: 29.14),
-    ChartBar(x: 2015, y: 28.70),
-    ChartBar(x: 2016, y: 28.80),
+    ChartBar(x: 2015, y: 28.7),
+    ChartBar(x: 2016, y: 28.8),
     ChartBar(x: 2017, y: 29.28),
     ChartBar(x: 2018, y: 29.47),
     ChartBar(x: 2019, y: 30.46),

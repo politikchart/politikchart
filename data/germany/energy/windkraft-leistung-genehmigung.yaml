@@ -1,0 +1,18 @@
+name: 'Windkraft-Leistung Genehmigung'
+sources:
+  - 'https://www.fachagentur-windenergie.de/veroeffentlichungen/publikationen/'
+  - 'https://www.fachagentur-windenergie.de/aktuelles/detail/rekord-jahr-bei-den-windenergie-genehmigungen/'
+  - 'https://www.fachagentur-windenergie.de/fileadmin/files/Veroeffentlichungen/Ausbau/Windenergie-Situation_Herbst_2024_Foliensatz.pdf'
+yLabel: 'GW'
+bars:
+  2014: 4.94
+  2015: 3.77
+  2016: 9.41
+  2017: 1.39
+  2018: 1.58
+  2019: 1.96
+  2020: 2.96
+  2021: 4.14
+  2022: 4.25
+  2023: 7.55
+  2024: 14.06
