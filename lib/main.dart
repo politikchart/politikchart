@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:politikchart/data/germany/arbeitslosen_quote.dart'
+deferred as arbeitslosen_quote;
 import 'package:politikchart/data/germany/benzin_preis.dart'
 deferred as benzin_preis;
 import 'package:politikchart/data/germany/solar_leistung_zubau.dart'
@@ -52,6 +54,7 @@ class MyApp extends StatelessWidget {
 }
 
 enum ChartType {
+  arbeitslosenQuote('Arbeitslosenquote'),
   benzinPreis('Benzinpreis (E5)'),
   stromPreis('Strompreis'),
   solarLeistungZubau('Solar Leistung Zubau'),
@@ -64,6 +67,9 @@ enum ChartType {
 
   Future<ChartData> loadChartData() async {
     switch (this) {
+      case ChartType.arbeitslosenQuote:
+        await arbeitslosen_quote.loadLibrary();
+        return arbeitslosen_quote.arbeitslosenQuote;
       case ChartType.benzinPreis:
         await benzin_preis.loadLibrary();
         return benzin_preis.benzinPreis;
