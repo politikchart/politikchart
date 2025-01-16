@@ -1,6 +1,4 @@
-import 'package:politikchart/data/germany/_parties.dart';
-import 'package:politikchart/data/party.dart';
-import 'package:politikchart/widgets/chart/chart.dart';
+import 'package:politikchart/widgets/chart/chart_data.dart';
 
 const benzinPreis = ChartData(
   sources: [
@@ -35,5 +33,4 @@ const benzinPreis = ChartData(
     ChartBar(x: 2023, y: 1.849),
     ChartBar(x: 2024, y: 1.807),
   ],
-  governmentProvider: GovernmentProvider(governments),
 );

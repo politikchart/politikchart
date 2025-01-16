@@ -1,10 +1,9 @@
-import 'package:politikchart/data/germany/_parties.dart';
-import 'package:politikchart/data/party.dart';
-import 'package:politikchart/widgets/chart/chart.dart';
+import 'package:politikchart/widgets/chart/chart_data.dart';
 
 const stromPreis = ChartData(
   sources: [
     'https://de.wikipedia.org/wiki/Strompreis',
+    'https://www.bdew.de/service/daten-und-grafiken/bdew-strompreisanalyse/',
   ],
   yLabel: 'ct/kWh',
   bars: [
@@ -33,7 +32,6 @@ const stromPreis = ChartData(
     ChartBar(x: 2021, y: 32.16),
     ChartBar(x: 2022, y: 37.91),
     ChartBar(x: 2023, y: 45.73),
-    ChartBar(x: 2024, y: 42.22),
+    ChartBar(x: 2024, y: 40.92),
   ],
-  governmentProvider: GovernmentProvider(governments),
 );

@@ -1,6 +1,4 @@
-import 'package:politikchart/data/germany/_parties.dart';
-import 'package:politikchart/data/party.dart';
-import 'package:politikchart/widgets/chart/chart.dart';
+import 'package:politikchart/widgets/chart/chart_data.dart';
 
 const windkraftLeistungGenehmigung = ChartData(
   sources: [
@@ -22,5 +20,4 @@ const windkraftLeistungGenehmigung = ChartData(
     ChartBar(x: 2023, y: 7.55),
     ChartBar(x: 2024, y: 14.06),
   ],
-  governmentProvider: GovernmentProvider(governments),
 );

@@ -1,15 +1,19 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:politikchart/data/germany/_parties.dart';
 import 'package:politikchart/data/germany/arbeitslosen_quote.dart' deferred as arbeitslosen_quote;
+import 'package:politikchart/data/germany/batterie_kapazitaet_zubau.dart' deferred as batterie_kapazitaet_zubau;
 import 'package:politikchart/data/germany/benzin_preis.dart' deferred as benzin_preis;
 import 'package:politikchart/data/germany/solar_leistung_zubau.dart' deferred as solar_leistung_zubau;
 import 'package:politikchart/data/germany/strom_preis.dart' deferred as strom_preis;
 import 'package:politikchart/data/germany/windkraft_leistung_genehmigung.dart' deferred as windkraft_leistung_genehmigung;
+import 'package:politikchart/data/party.dart';
 import 'package:politikchart/i18n/gen/strings.g.dart';
 import 'package:politikchart/utils/link.dart';
 import 'package:politikchart/utils/url.dart';
 import 'package:politikchart/widgets/chart/chart.dart';
+import 'package:politikchart/widgets/chart/chart_data.dart';
 import 'package:politikchart/widgets/dialogs/sources_dialog.dart';
 import 'package:politikchart/widgets/input/labeled_checkbox.dart';
 import 'package:recase/recase.dart';
@@ -60,6 +64,7 @@ class MyApp extends StatelessWidget {
 
 enum ChartType {
   arbeitslosenQuote('Arbeitslosenquote'),
+  batterySpeicherKapazitaetZubau('Batterie Speicher Kapazität Zubau'),
   benzinPreis('Benzinpreis (E5)'),
   stromPreis('Strompreis'),
   solarLeistungZubau('Solar Leistung Zubau'),
@@ -75,6 +80,9 @@ enum ChartType {
       case ChartType.arbeitslosenQuote:
         await arbeitslosen_quote.loadLibrary();
         return arbeitslosen_quote.arbeitslosenQuote;
+      case ChartType.batterySpeicherKapazitaetZubau:
+        await batterie_kapazitaet_zubau.loadLibrary();
+        return batterie_kapazitaet_zubau.batterieKapazitaetZubau;
       case ChartType.benzinPreis:
         await benzin_preis.loadLibrary();
         return benzin_preis.benzinPreis;
@@ -168,6 +176,7 @@ class _HomePageState extends State<HomePage> {
                                   )
                                 : Chart(
                                     data: chartData!,
+                                    governmentProvider: GovernmentProvider(governments),
                                     showGovernment: showGovernment,
                                     governmentDelay: governmentDelay,
                                     animate: animate,

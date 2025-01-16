@@ -6,39 +6,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
 import 'package:politikchart/data/party.dart';
-
-class ChartData {
-  final List<String> sources;
-  final String yLabel;
-  final List<ChartBar> bars;
-  final GovernmentProvider governmentProvider;
-
-  const ChartData({
-    required this.sources,
-    required this.yLabel,
-    required this.bars,
-    required this.governmentProvider,
-  });
-}
-
-class ChartBar {
-  final int x;
-  final double y;
-
-  const ChartBar({
-    required this.x,
-    required this.y,
-  });
-}
+import 'package:politikchart/widgets/chart/chart_data.dart';
 
 class Chart extends StatefulWidget {
   final ChartData data;
+  final GovernmentProvider governmentProvider;
   final bool showGovernment;
   final bool governmentDelay;
   final bool animate;
 
   const Chart({
     required this.data,
+    required this.governmentProvider,
     required this.showGovernment,
     required this.governmentDelay,
     required this.animate,
@@ -191,7 +170,7 @@ class _ChartState extends State<Chart> {
                 barGap: gap,
                 startYear: widget.data.bars.first.x,
                 endYear: widget.data.bars.last.x,
-                governments: widget.data.governmentProvider.governments,
+                governments: widget.governmentProvider.governments,
                 governmentDelay: widget.governmentDelay,
                 animate: widget.animate,
               ),

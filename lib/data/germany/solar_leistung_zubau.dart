@@ -1,6 +1,4 @@
-import 'package:politikchart/data/germany/_parties.dart';
-import 'package:politikchart/data/party.dart';
-import 'package:politikchart/widgets/chart/chart.dart';
+import 'package:politikchart/widgets/chart/chart_data.dart';
 
 const solarLeistungZubau = ChartData(
   sources: [
@@ -28,5 +26,4 @@ const solarLeistungZubau = ChartData(
     ChartBar(x: 2023, y: 14.8),
     ChartBar(x: 2024, y: 15.9),
   ],
-  governmentProvider: GovernmentProvider(governments),
 );

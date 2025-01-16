@@ -1,6 +1,4 @@
-import 'package:politikchart/data/germany/_parties.dart';
-import 'package:politikchart/data/party.dart';
-import 'package:politikchart/widgets/chart/chart.dart';
+import 'package:politikchart/widgets/chart/chart_data.dart';
 
 const arbeitslosenQuote = ChartData(
   sources: [
@@ -35,5 +33,4 @@ const arbeitslosenQuote = ChartData(
     ChartBar(x: 2023, y: 6.2),
     ChartBar(x: 2024, y: 6.5),
   ],
-  governmentProvider: GovernmentProvider(governments),
 );
