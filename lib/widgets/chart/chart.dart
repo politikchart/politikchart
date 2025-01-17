@@ -38,10 +38,15 @@ class _ChartState extends State<Chart> {
     final numberFormatOnlyDecimals = NumberFormat('0.00', locale);
 
     return LayoutBuilder(builder: (context, constraints) {
+      final displayWidth = MediaQuery.sizeOf(context).width;
+
       final padLeft = 50.0;
       final padRight = 10.0;
       final padBottom = 30.0;
-      final padTop = 80.0;
+      final padTop = switch (displayWidth) {
+        < 800 => 130.0,
+        _ => 80.0,
+      };
       final gap = switch (constraints.maxWidth) {
         _ when constraints.maxWidth < 800 => 5.0,
         _ when constraints.maxWidth < 1200 => 10.0,
@@ -51,11 +56,12 @@ class _ChartState extends State<Chart> {
 
       final maxY = widget.data.bars.map((bar) => bar.y).reduce((a, b) => a > b ? a : b).ceilToDouble();
       final minY = min(0, widget.data.bars.map((bar) => bar.y).reduce((a, b) => a < b ? a : b).floorToDouble());
-      final deltaY = maxY - minY + 1;
+      final deltaY = maxY - minY;
       final maxBarHeight = constraints.maxHeight - padBottom - padTop;
 
       final ySteps = switch (maxY) {
         _ when maxY < 15 => 1,
+        _ when maxY < 50 => 5,
         _ when maxY < 150 => 10,
         _ when maxY < 1500 => 100,
         _ when maxY < 15000 => 1000,
@@ -190,11 +196,13 @@ class _ChartState extends State<Chart> {
                   },
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 2),
-                    child: barHeight - 5 < textHeight
+                    child: displayWidth < 800 || barHeight - 5 < textHeight
                         ? null
-                        : Text(
-                            valueFormatter.format(bar.y),
-                            style: TextStyle(color: barValueColor),
+                        : FittedBox(
+                            child: Text(
+                              valueFormatter.format(bar.y),
+                              style: TextStyle(color: barValueColor),
+                            ),
                           ),
                   ),
                 ),
@@ -281,6 +289,8 @@ class _ChartState extends State<Chart> {
                         },
                       ),
                     Container(
+                      width: widthPerBar + additionalWidth,
+                      height: textHeight,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(4),
                         color: switch (colorScheme.brightness) {
@@ -288,7 +298,7 @@ class _ChartState extends State<Chart> {
                           Brightness.dark => Colors.white,
                         },
                       ),
-                      child: Center(
+                      child: FittedBox(
                         child: Text(
                           numberFormat.format(widget.data.bars[selectedIndex!].y),
                           style: TextStyle(
@@ -364,6 +374,7 @@ class _Government extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final displayWidth = MediaQuery.sizeOf(context).width;
     final list = <Widget>[];
     int currYear = startYear;
 
@@ -380,15 +391,26 @@ class _Government extends StatelessWidget {
         children: [
           SizedBox(
             width: width,
-            height: 50,
+            height: switch (displayWidth) {
+              < 800 => 100,
+              _ => 50,
+            },
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                FittedBox(
-                  child: Text('„${gov.alias}“'),
-                ),
-                FittedBox(
-                  child: Text(gov.parties.map((p) => p.name).join(' / ')),
-                ),
+                if (displayWidth >= 800)
+                  FittedBox(
+                    child: Text('„${gov.alias}“'),
+                  ),
+                if (displayWidth < 800)
+                  for (final party in gov.parties)
+                    FittedBox(
+                      child: Text(party.name),
+                    )
+                else
+                  FittedBox(
+                    child: Text(gov.parties.map((p) => p.name).join(' / ')),
+                  ),
                 const SizedBox(height: 10),
               ],
             ).let((w) {

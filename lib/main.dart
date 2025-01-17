@@ -133,7 +133,10 @@ class _HomePageState extends State<HomePage> {
                           const SizedBox(height: 20),
                           SizedBox(
                             width: 1200,
-                            height: 600,
+                            height: switch (displaySize.width) {
+                              < 800 => 650,
+                              _ => 600,
+                            },
                             child: chartData == null
                                 ? Center(
                                     child: const CircularProgressIndicator(),
