@@ -63,6 +63,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  String? groupName;
   ChartData? chartData;
   bool showGovernment = true;
   bool governmentDelay = true;
@@ -90,6 +91,7 @@ class _HomePageState extends State<HomePage> {
   void _loadChart(LazyChartGroup group, String chartKey) async {
     setState(() {
       chartData = null;
+      groupName = group.title;
       governmentDelay = true;
     });
 
@@ -129,7 +131,12 @@ class _HomePageState extends State<HomePage> {
                       padding: const EdgeInsets.only(top: 20, right: 20, bottom: 20),
                       child: Column(
                         children: [
-                          Text(chartData?.name ?? '', style: Theme.of(context).textTheme.titleLarge),
+                          Text('${groupName ?? ''}: ${chartData?.name ?? ''}', style: Theme.of(context).textTheme.titleLarge),
+                          if (chartData?.description != null)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 4),
+                              child: Text(chartData!.description!, style: Theme.of(context).textTheme.titleSmall),
+                            ),
                           const SizedBox(height: 20),
                           SizedBox(
                             width: 1200,
@@ -261,6 +268,7 @@ class _HomePageState extends State<HomePage> {
 
 extension on LazyChartGroup {
   String get title => switch (key) {
+        'crime' => 'Kriminalität',
         'economy' => 'Wirtschaft',
         'energy' => 'Energie',
         _ => key,

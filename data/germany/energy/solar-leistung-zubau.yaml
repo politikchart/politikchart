@@ -1,4 +1,5 @@
 name: 'Solarleistung Zubau'
+description: 'Zubau der Solarleistung in Gigawatt'
 sources:
   - 'https://strom-report.com/photovoltaik/'
 yLabel: 'GW'

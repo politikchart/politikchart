@@ -3,6 +3,7 @@ import 'package:politikchart/model/chart.dart';
 const chartData = ChartData(
   key: 'batterie-kapazitaet-zubau',
   name: 'Batterie-Kapazität Zubau',
+  description: 'Zubau der Batterie-Kapazität in Gigawattstunden',
   sources: [
     'https://scarica.isea.rwth-aachen.de/mastr/d/lA4kI2GVz/battery-status?orgId=1&from=now-20y&to=now%2B1M&viewPanel=39&inspect=39&inspectTab=data',
   ],

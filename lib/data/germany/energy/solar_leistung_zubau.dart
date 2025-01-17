@@ -3,6 +3,7 @@ import 'package:politikchart/model/chart.dart';
 const chartData = ChartData(
   key: 'solar-leistung-zubau',
   name: 'Solarleistung Zubau',
+  description: 'Zubau der Solarleistung in Gigawatt',
   sources: [
     'https://strom-report.com/photovoltaik/',
   ],

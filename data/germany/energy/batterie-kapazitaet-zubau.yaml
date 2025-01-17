@@ -1,4 +1,5 @@
 name: 'Batterie-Kapazität Zubau'
+description: 'Zubau der Batterie-Kapazität in Gigawattstunden'
 sources:
   # using delta between 01.Dez and 01.Dez. of each year
   - 'https://scarica.isea.rwth-aachen.de/mastr/d/lA4kI2GVz/battery-status?orgId=1&from=now-20y&to=now%2B1M&viewPanel=39&inspect=39&inspectTab=data'

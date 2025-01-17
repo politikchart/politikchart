@@ -3,6 +3,7 @@ import 'package:politikchart/model/chart.dart';
 const chartData = ChartData(
   key: 'windkraft-leistung-genehmigung',
   name: 'Windkraft-Leistung Genehmigung',
+  description: 'Genehmigte Windkraftleistung in Gigawatt',
   sources: [
     'https://www.fachagentur-windenergie.de/veroeffentlichungen/publikationen/',
     'https://www.fachagentur-windenergie.de/aktuelles/detail/rekord-jahr-bei-den-windenergie-genehmigungen/',

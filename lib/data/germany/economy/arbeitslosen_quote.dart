@@ -3,6 +3,7 @@ import 'package:politikchart/model/chart.dart';
 const chartData = ChartData(
   key: 'arbeitslosen-quote',
   name: 'Arbeitslosenquote',
+  description: null,
   sources: [
     'https://www.destatis.de/DE/Themen/Wirtschaft/Konjunkturindikatoren/Lange-Reihen/Arbeitsmarkt/lrarb003ga.html',
   ],

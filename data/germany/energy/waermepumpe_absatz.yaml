@@ -1,0 +1,27 @@
+name: 'Wärmepumpe Absatz'
+description: 'Anzahl der verkauften Wärmepumpen'
+sources:
+  - 'https://www.waermepumpe.de'
+  - 'https://www.waermepumpe.de/fileadmin/user_upload/Diagramm_Absatz_WP_2004-2023.jpg'
+yLabel: 'Tsd'
+bars:
+  2004: 18.5
+  2005: 25.5
+  2006: 57.5
+  2007: 57.5
+  2008: 78
+  2009: 67.5
+  2010: 60
+  2011: 66
+  2012: 70
+  2013: 72
+  2014: 71.5
+  2015: 69.5
+  2016: 79
+  2017: 91.5
+  2018: 99
+  2019: 101
+  2020: 140.5
+  2021: 177.5
+  2022: 281
+  2023: 438.5

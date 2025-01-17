@@ -1,0 +1,21 @@
+name: 'Tötung'
+description: 'Mord, Totschlag und Tötung auf Verlangen'
+sources:
+  - 'https://www.bka.de'
+  - 'https://www.bka.de/DE/AktuelleInformationen/StatistikenLagebilder/PolizeilicheKriminalstatistik/pks_node.html'
+  - 'https://www.bka.de/SharedDocs/Downloads/DE/Publikationen/PolizeilicheKriminalstatistik/2023/BundesdatenDelikte/03_MordTotschlagToetungAufVerlangenBRD.pdf?__blob=publicationFile&v=3'
+yLabel: 'Tsd'
+bars:
+  2011: 2.174
+  2012: 2.126
+  2013: 2.122
+  2014: 2.179
+  2015: 2.116
+  2016: 2.418
+  2017: 2.379
+  2018: 2.471
+  2019: 2.315
+  2020: 2.401
+  2021: 2.111
+  2022: 2.236
+  2023: 2.282

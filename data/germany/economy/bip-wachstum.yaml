@@ -1,4 +1,5 @@
 name: 'BIP Wachstum'
+description: 'Wachstum des Bruttoinlandsprodukt im Jahresvergleich'
 sources:
   - 'https://www.destatis.de/DE/Presse/Pressemitteilungen/2023/06/PD23_N032_81.html'
   - 'https://www.destatis.de/DE/Presse/Pressemitteilungen/2025/01/PD25_019_811.html'

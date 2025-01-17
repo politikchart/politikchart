@@ -112,6 +112,8 @@ List<ChartGroup> scanChartGroups(String countryDir) {
     result.add(ChartGroup(key: groupKey, charts: charts));
   }
 
+  result.sort((a, b) => a.key.compareTo(b.key));
+
   return result;
 }
 
@@ -128,6 +130,7 @@ List<ChartData> scanCharts(String groupDir) {
     final parsed = loadYaml(raw);
 
     final name = parsed['name'];
+    final description = parsed['description'];
     final sources = parsed['sources'].cast<String>();
     final yLabel = parsed['yLabel'];
     final bars = parsed['bars'].entries.map((entry) {
@@ -137,6 +140,7 @@ List<ChartData> scanCharts(String groupDir) {
     result.add(ChartData(
       key: file.path.replaceAll('\\', '/').split('/').last.replaceAll('.yaml', ''),
       name: name,
+      description: description,
       sources: sources,
       yLabel: yLabel,
       bars: bars,
@@ -203,6 +207,7 @@ String generateChartFile(ChartData data) {
   buffer.writeln('const chartData = ChartData(');
   buffer.writeln("  key: '${data.key}',");
   buffer.writeln("  name: '${data.name}',");
+  buffer.writeln("  description: ${data.description != null ? "'${data.description}'," : 'null,'}");
   buffer.writeln('  sources: [');
   for (final source in data.sources) {
     buffer.writeln("    '$source',");

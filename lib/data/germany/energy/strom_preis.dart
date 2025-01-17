@@ -3,6 +3,7 @@ import 'package:politikchart/model/chart.dart';
 const chartData = ChartData(
   key: 'strom-preis',
   name: 'Strompreis',
+  description: 'Durchschnittlicher Strompreis',
   sources: [
     'https://de.wikipedia.org/wiki/Strompreis',
     'https://www.bdew.de/service/daten-und-grafiken/bdew-strompreisanalyse/',
