@@ -23,8 +23,20 @@ jobs:
       - name: Dependencies
         run: flutter pub get
 
+      - name: Get Current Date
+        id: get-date
+        run: echo "version=v$(date +'%Y%m%d%H%M')" >> $GITHUB_ENV
+
       - name: Build
-        run: flutter build web
+        run: flutter build web --base-href="/${{ env.version }}/"
+
+      - name: Create version directory
+        run: mkdir -p build/web/${{ env.version }}
+
+      - name: Move build files to version directory
+        run: |
+          shopt -s extglob
+          mv build/web/!(${{ env.version }}|index.html) build/web/${{ env.version }}
 
       - name: Upload Build
         uses: actions/upload-artifact@v4
