@@ -4,7 +4,7 @@ import 'dart:html' as html;
 void setBrowserUrl({
   required String url,
 }) {
-  html.window.history.pushState(null, 'home', '#$url');
+  html.window.history.pushState(null, 'home', '/#$url');
 }
 
 String? getBrowserUrl() {
