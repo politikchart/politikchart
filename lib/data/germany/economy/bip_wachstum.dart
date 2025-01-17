@@ -1,0 +1,38 @@
+import 'package:politikchart/model/chart.dart';
+
+const chartData = ChartData(
+  key: 'bip-wachstum',
+  name: 'BIP Wachstum',
+  sources: [
+    'https://www.destatis.de/DE/Presse/Pressemitteilungen/2023/06/PD23_N032_81.html',
+    'https://www.destatis.de/DE/Presse/Pressemitteilungen/2025/01/PD25_019_811.html',
+  ],
+  yLabel: '%',
+  bars: [
+    ChartBar(x: 2000, y: 2.9),
+    ChartBar(x: 2001, y: 1.7),
+    ChartBar(x: 2002, y: -0.2),
+    ChartBar(x: 2003, y: -0.7),
+    ChartBar(x: 2004, y: 1.2),
+    ChartBar(x: 2005, y: 0.7),
+    ChartBar(x: 2006, y: 3.8),
+    ChartBar(x: 2007, y: 3.0),
+    ChartBar(x: 2008, y: 1.0),
+    ChartBar(x: 2009, y: -5.7),
+    ChartBar(x: 2010, y: 4.2),
+    ChartBar(x: 2011, y: 3.9),
+    ChartBar(x: 2012, y: 0.4),
+    ChartBar(x: 2013, y: 0.4),
+    ChartBar(x: 2014, y: 2.2),
+    ChartBar(x: 2015, y: 1.5),
+    ChartBar(x: 2016, y: 2.2),
+    ChartBar(x: 2017, y: 2.7),
+    ChartBar(x: 2018, y: 1.0),
+    ChartBar(x: 2019, y: 1.1),
+    ChartBar(x: 2020, y: -3.7),
+    ChartBar(x: 2021, y: 2.6),
+    ChartBar(x: 2022, y: 1.8),
+    ChartBar(x: 2023, y: -0.3),
+    ChartBar(x: 2024, y: -0.2),
+  ],
+);

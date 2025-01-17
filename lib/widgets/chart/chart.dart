@@ -28,6 +28,8 @@ class Chart extends StatefulWidget {
 }
 
 class _ChartState extends State<Chart> {
+  int? selectedIndex;
+
   @override
   Widget build(BuildContext context) {
     final locale = Localizations.localeOf(context).toLanguageTag();
@@ -47,7 +49,9 @@ class _ChartState extends State<Chart> {
       };
       final widthPerBar = (constraints.maxWidth - gap * (widget.data.bars.length - 1) - padLeft - padRight) / widget.data.bars.length;
 
-      final maxY = widget.data.bars.map((bar) => bar.y).reduce((a, b) => a > b ? a : b);
+      final maxY = widget.data.bars.map((bar) => bar.y).reduce((a, b) => a > b ? a : b).ceilToDouble();
+      final minY = min(0, widget.data.bars.map((bar) => bar.y).reduce((a, b) => a < b ? a : b).floorToDouble());
+      final deltaY = maxY - minY + 1;
       final maxBarHeight = constraints.maxHeight - padBottom - padTop;
 
       final ySteps = switch (maxY) {
@@ -74,39 +78,17 @@ class _ChartState extends State<Chart> {
         xLabelModulo += 1;
       }
 
-      final barColor = switch(colorScheme.brightness) {
+      final barColor = switch (colorScheme.brightness) {
         Brightness.light => Colors.cyan.shade900,
         Brightness.dark => colorScheme.primary,
       };
-      final barValueColor = switch(colorScheme.brightness) {
+      final barValueColor = switch (colorScheme.brightness) {
         Brightness.light => colorScheme.onPrimary,
         Brightness.dark => colorScheme.onPrimary,
       };
 
       return Stack(
         children: [
-          // x-axis
-          Positioned(
-            bottom: padBottom,
-            left: padLeft - gap,
-            right: 0,
-            child: Container(
-              height: 1,
-              color: colorScheme.onSurface,
-            ),
-          ),
-
-          // y-axis
-          Positioned(
-            top: padTop - textHeight,
-            left: padLeft - gap,
-            bottom: padBottom,
-            child: Container(
-              width: 1,
-              color: colorScheme.onSurface,
-            ),
-          ),
-
           // x-axis labels
           ...widget.data.bars.mapIndexed((index, bar) {
             if (xLabelModulo != 1 && (index % xLabelModulo != 0 || (index + (xLabelModulo - 1)) >= widget.data.bars.length)) {
@@ -128,10 +110,13 @@ class _ChartState extends State<Chart> {
 
           // y-axis labels
           ...List.generate(
-            (maxY / ySteps).ceil(),
+            (deltaY / ySteps).ceil() + 1,
             (index) {
-              final y = index * ySteps;
-              final yPosition = (y / maxY) * maxBarHeight - textHeight / 2;
+              final y = (index + minY) * ySteps;
+              final yPosition = ((y - minY) / deltaY) * maxBarHeight - textHeight / 2;
+              if (yPosition >= maxBarHeight - textHeight) {
+                return const SizedBox();
+              }
 
               return Positioned(
                 left: 0,
@@ -176,42 +161,180 @@ class _ChartState extends State<Chart> {
             ),
 
           // bars
-          ...widget.data.bars.asMap().entries.mapIndexed((index, entry) {
-            final index = entry.key;
-            final bar = entry.value;
+          ...widget.data.bars.mapIndexed((index, bar) {
+            final barHeight = (bar.y.abs() / deltaY) * maxBarHeight;
 
             return Positioned(
               key: ValueKey('${widget.data.hashCode}+${bar.x}'),
               left: padLeft + index * widthPerBar + index * gap,
-              bottom: padBottom + 1,
+              bottom: padBottom +
+                  switch (minY) {
+                    == 0 => 1,
+                    _ => switch (bar.y) {
+                        >= 0 => -minY / deltaY * maxBarHeight + 1,
+                        _ => -minY / deltaY * maxBarHeight - barHeight,
+                      }
+                  },
               width: widthPerBar,
-              height: (bar.y / maxY) * maxBarHeight,
+              height: barHeight,
               child: Container(
                 color: barColor,
-                padding: const EdgeInsets.only(top: 5),
+                padding: switch (bar.y) {
+                  >= 0 => EdgeInsets.only(top: 5),
+                  _ => EdgeInsets.only(bottom: 5),
+                },
                 child: Align(
-                  alignment: Alignment.topCenter,
-                  child: FittedBox(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 2),
-                      child: Text(
-                        valueFormatter.format(bar.y),
-                        style: TextStyle(color: barValueColor),
-                      ),
-                    ),
+                  alignment: switch (bar.y) {
+                    >= 0 => Alignment.topCenter,
+                    _ => Alignment.bottomCenter,
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 2),
+                    child: barHeight - 5 < textHeight
+                        ? null
+                        : Text(
+                            valueFormatter.format(bar.y),
+                            style: TextStyle(color: barValueColor),
+                          ),
                   ),
                 ),
               ).let((w) {
                 if (widget.animate) {
                   return w.animate(delay: Duration(milliseconds: index * 10)).scaleY(
                         duration: const Duration(milliseconds: 300),
-                        alignment: Alignment.bottomCenter,
+                        alignment: switch (bar.y) {
+                          >= 0 => Alignment.bottomCenter,
+                          _ => Alignment.topCenter,
+                        },
                         curve: Curves.easeOutCubic,
                       );
                 } else {
                   return w;
                 }
               }),
+            );
+          }),
+
+          // x-axis
+          Positioned(
+            bottom: padBottom,
+            left: padLeft - gap,
+            right: 0,
+            child: Container(
+              height: 1,
+              color: colorScheme.onSurface,
+            ),
+          ),
+
+          // y-axis
+          Positioned(
+            top: padTop - textHeight,
+            left: padLeft - gap,
+            bottom: padBottom,
+            child: Container(
+              width: 1,
+              color: colorScheme.onSurface,
+            ),
+          ),
+
+          // x-axis (zero)
+          if (minY < 0)
+            Positioned(
+              bottom: padBottom + -minY / deltaY * maxBarHeight,
+              left: padLeft - gap,
+              right: 0,
+              child: Container(
+                height: 1,
+                color: colorScheme.onSurface,
+              ),
+            ),
+
+          // bar tooltip
+          if (selectedIndex != null)
+            () {
+              final y = widget.data.bars[selectedIndex!].y;
+              final barHeight = (y.abs() / deltaY) * maxBarHeight;
+              const additionalWidth = 20;
+              const lineHeight = 10.0;
+
+              return Positioned(
+                left: padLeft + selectedIndex! * widthPerBar + selectedIndex! * gap - additionalWidth / 2,
+                bottom: padBottom +
+                    switch (minY) {
+                      == 0 => barHeight,
+                      _ => switch (y) {
+                          >= 0 => barHeight + -minY / deltaY * maxBarHeight + 1,
+                          _ => -minY / deltaY * maxBarHeight - barHeight - textHeight - lineHeight,
+                        }
+                    },
+                width: widthPerBar + additionalWidth,
+                height: textHeight + lineHeight,
+                child: Column(
+                  children: [
+                    if (y < 0)
+                      Container(
+                        height: lineHeight,
+                        width: 1,
+                        color: switch (colorScheme.brightness) {
+                          Brightness.light => Colors.black,
+                          Brightness.dark => Colors.white,
+                        },
+                      ),
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(4),
+                        color: switch (colorScheme.brightness) {
+                          Brightness.light => Colors.black,
+                          Brightness.dark => Colors.white,
+                        },
+                      ),
+                      child: Center(
+                        child: Text(
+                          numberFormat.format(widget.data.bars[selectedIndex!].y),
+                          style: TextStyle(
+                            color: switch (colorScheme.brightness) {
+                              Brightness.light => Colors.white,
+                              Brightness.dark => Colors.black,
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                    if (y >= 0)
+                      Container(
+                        height: lineHeight,
+                        width: 1,
+                        color: switch (colorScheme.brightness) {
+                          Brightness.light => Colors.black,
+                          Brightness.dark => Colors.white,
+                        },
+                      ),
+                  ],
+                ),
+              );
+            }(),
+
+          // bars tooltip listener
+          ...widget.data.bars.mapIndexed((index, bar) {
+            return Positioned(
+              key: ValueKey('${widget.data.hashCode}+${bar.x}+tooltip'),
+              left: padLeft + index * widthPerBar + index * gap,
+              bottom: padBottom + 1,
+              width: widthPerBar,
+              height: maxBarHeight,
+              child: MouseRegion(
+                hitTestBehavior: HitTestBehavior.translucent,
+                onEnter: (_) {
+                  setState(() {
+                    selectedIndex = index;
+                  });
+                },
+                onExit: (_) {
+                  setState(() {
+                    selectedIndex = null;
+                  });
+                },
+              ),
             );
           }),
         ],
@@ -281,7 +404,7 @@ class _Government extends StatelessWidget {
               children: [
                 ...gov.parties.map((p) => Expanded(
                         child: Container(
-                      color: p.color.color.withValues(alpha: 0.5),
+                      color: p.color.color.withValues(alpha: 0.4),
                       width: width,
                     ))),
               ],

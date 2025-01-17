@@ -8,6 +8,7 @@ final chartGroups = [
     key: 'economy',
     chartKeys: {
       'arbeitslosen-quote': 'Arbeitslosenquote',
+      'bip-wachstum': 'BIP Wachstum',
     },
     load: () async {
       await economy.loadLibrary();
