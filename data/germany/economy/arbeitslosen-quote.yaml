@@ -1,4 +1,5 @@
 name: 'Arbeitslosenquote'
+description: 'Arbeitslosenquote in % bezogen auf alle zivilen Erwerbspersonen'
 sources:
   - 'https://www.destatis.de/DE/Themen/Wirtschaft/Konjunkturindikatoren/Lange-Reihen/Arbeitsmarkt/lrarb003ga.html'
 yLabel: '%'
