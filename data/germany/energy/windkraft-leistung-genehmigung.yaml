@@ -1,19 +1,32 @@
 name: 'Windkraft-Leistung Genehmigung'
-description: 'Genehmigte Windkraftleistung in Gigawatt'
+description: 'Genehmigte Windkraftleistung (Land und See) in Gigawatt'
 sources:
-  - 'https://www.fachagentur-windenergie.de/veroeffentlichungen/publikationen/'
-  - 'https://www.fachagentur-windenergie.de/aktuelles/detail/rekord-jahr-bei-den-windenergie-genehmigungen/'
-  - 'https://www.fachagentur-windenergie.de/fileadmin/files/Veroeffentlichungen/Ausbau/Windenergie-Situation_Herbst_2024_Foliensatz.pdf'
+  - 'https://www.marktstammdatenregister.de'
+  - 'https://www.marktstammdatenregister.de/MaStR/Einheit/Einheiten/ErweiterteOeffentlicheEinheitenuebersicht'
 yLabel: 'GW'
 bars:
-  2014: 4.94
-  2015: 3.77
-  2016: 9.41
-  2017: 1.39
-  2018: 1.58
-  2019: 1.96
-  2020: 2.96
-  2021: 4.14
-  2022: 4.25
-  2023: 7.55
-  2024: 14.06
+  2000: 0.91
+  2001: 1.47
+  2002: 2.22
+  2003: 1.77
+  2004: 2.95
+  2005: 2.13
+  2006: 2.39
+  2007: 1.86
+  2008: 1.25
+  2009: 1.08
+  2010: 1.59
+  2011: 2.33
+  2012: 2.78
+  2013: 4.61
+  2014: 4.42
+  2015: 4.31
+  2016: 10.18
+  2017: 1.01
+  2018: 1.67
+  2019: 1.85
+  2020: 3.18
+  2021: 5.52
+  2022: 5.72
+  2023: 7.34
+  2024: 15.88
