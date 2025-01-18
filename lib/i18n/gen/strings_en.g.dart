@@ -40,6 +40,8 @@ class Translations implements BaseTranslations<AppLocale, Translations> {
 	String get showGovernment => 'Show Government';
 	String get animations => 'Animations';
 	String get sources => 'Sources';
+	String get category => 'Category';
+	String statistics({required Object category}) => 'Statistics for ${category}';
 }
 
 /// Flat map(s) containing all translations.
@@ -50,6 +52,8 @@ extension on Translations {
 			case 'showGovernment': return 'Show Government';
 			case 'animations': return 'Animations';
 			case 'sources': return 'Sources';
+			case 'category': return 'Category';
+			case 'statistics': return ({required Object category}) => 'Statistics for ${category}';
 			default: return null;
 		}
 	}

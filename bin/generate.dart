@@ -96,25 +96,38 @@ String generateGovernmentFile(
   return buffer.toString();
 }
 
-List<ChartGroup> scanChartGroups(String countryDir) {
+List<ParsedChartGroup> scanChartGroups(String countryDir) {
+  final groupsFile = File('$countryDir/groups.yaml').readAsStringSync();
+  final Map<String, String> groupsParsed = loadYaml(groupsFile).cast<String, String>();
+
   final directories = Directory(countryDir).listSync();
 
-  final result = <ChartGroup>[];
+  final result = <String, ParsedChartGroup>{};
   for (final dir in directories) {
     if (dir is! Directory) {
       continue;
     }
 
+    final dirName = dir.path.replaceAll('\\', '/').split('/').last;
+
+    if (!groupsParsed.containsKey(dirName)) {
+      // ignore: avoid_print
+      print('Group $dirName not found in groups.yaml');
+      continue;
+    }
+
     final groupDir = dir.path;
-    final groupKey = groupDir.replaceAll('\\', '/').split('/').last;
     final charts = scanCharts(groupDir);
 
-    result.add(ChartGroup(key: groupKey, charts: charts));
+    result[dirName] = ParsedChartGroup(
+      key: dirName,
+      label: groupsParsed[dirName]!,
+      charts: charts,
+    );
   }
 
-  result.sort((a, b) => a.key.compareTo(b.key));
-
-  return result;
+  // Using keys from groupsParsed to keep the order
+  return groupsParsed.keys.map((key) => result[key]!).toList();
 }
 
 List<ChartData> scanCharts(String groupDir) {
@@ -133,9 +146,13 @@ List<ChartData> scanCharts(String groupDir) {
     final description = parsed['description'];
     final sources = parsed['sources'].cast<String>();
     final yLabel = parsed['yLabel'];
-    final bars = parsed['bars'].entries.map((entry) {
-      return ChartBar(x: entry.key, y: entry.value.toDouble());
-    }).cast<ChartBar>().toList();
+    final bars = parsed['bars']
+        .entries
+        .map((entry) {
+          return ChartBar(x: entry.key, y: entry.value.toDouble());
+        })
+        .cast<ChartBar>()
+        .toList();
 
     result.add(ChartData(
       key: file.path.replaceAll('\\', '/').split('/').last.replaceAll('.yaml', ''),
@@ -152,10 +169,10 @@ List<ChartData> scanCharts(String groupDir) {
   return result;
 }
 
-String generateMainChart(List<ChartGroup> groups) {
+String generateMainChart(List<ParsedChartGroup> groups) {
   final buffer = StringBuffer();
 
-  buffer.writeln('// ignore_for_file: always_use_package_imports');
+  buffer.writeln('// ignore_for_file: always_use_package_imports, directives_ordering');
   buffer.writeln("import 'package:politikchart/model/chart.dart';");
   for (final group in groups) {
     buffer.writeln("import '${group.key}/_charts.dart' deferred as ${group.key.replaceAll('-', '_')};");
@@ -166,6 +183,7 @@ String generateMainChart(List<ChartGroup> groups) {
   for (final group in groups) {
     buffer.writeln('  LazyChartGroup(');
     buffer.writeln("    key: '${group.key}',");
+    buffer.writeln("    label: '${group.label}',");
     buffer.writeln('    chartKeys: {');
     for (final chart in group.charts) {
       buffer.writeln("      '${chart.key}': '${chart.name}',");
@@ -182,7 +200,7 @@ String generateMainChart(List<ChartGroup> groups) {
   return buffer.toString();
 }
 
-String generateChartGroupFile(ChartGroup group) {
+String generateChartGroupFile(ParsedChartGroup group) {
   final buffer = StringBuffer();
   buffer.writeln('// ignore_for_file: always_use_package_imports');
   for (final chart in group.charts) {
@@ -207,7 +225,7 @@ String generateChartFile(ChartData data) {
   buffer.writeln('const chartData = ChartData(');
   buffer.writeln("  key: '${data.key}',");
   buffer.writeln("  name: '${data.name}',");
-  buffer.writeln("  description: ${data.description != null ? "'${data.description}'," : 'null,'}");
+  buffer.writeln("  description: '${data.description}',");
   buffer.writeln('  sources: [');
   for (final source in data.sources) {
     buffer.writeln("    '$source',");
@@ -222,4 +240,16 @@ String generateChartFile(ChartData data) {
   buffer.writeln(');');
 
   return buffer.toString();
+}
+
+class ParsedChartGroup {
+  final String key;
+  final String label;
+  final List<ChartData> charts;
+
+  const ParsedChartGroup({
+    required this.key,
+    required this.label,
+    required this.charts,
+  });
 }

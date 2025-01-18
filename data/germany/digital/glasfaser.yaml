@@ -1,0 +1,17 @@
+name: 'Glasfaser'
+description: 'Aktive Glasfaseranschlüsse über FTTH/B in Millionen'
+sources:
+  - 'https://www.bundesnetzagentur.de'
+  - 'https://www.bundesnetzagentur.de/DE/Fachthemen/Datenportal/1_Digitales_Telekommunikation/_svg_TK/TK_Festnetz/Aktive%20Anschluesse%20FTTH%20FTTB/Aktive%20Anschluesse%20FTTH%20FTTB.html'
+yLabel: 'Mio'
+bars:
+  2014: 0.3
+  2015: 0.4
+  2016: 0.6
+  2017: 0.8
+  2018: 1.1
+  2019: 1.5
+  2020: 2
+  2021: 2.6
+  2022: 3.4
+  2023: 4.3

@@ -1,5 +1,7 @@
 {
   "showGovernment": "Show Government",
   "animations": "Animations",
-  "sources": "Sources"
+  "sources": "Sources",
+  "category": "Category",
+  "statistics": "Statistics for $category"
 }

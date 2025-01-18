@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Politik Chart',
+      title: 'PolitikChart',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: Colors.cyan,
@@ -49,7 +49,7 @@ class MyApp extends StatelessWidget {
       home: const HomePage(),
       routes: {
         for (final group in chartGroups)
-          for (final chart in group.chartKeys.keys) '/de/$chart': (context) => HomePage(),
+          for (final chart in group.chartKeys.keys) '/de/${group.key}+$chart': (context) => HomePage(),
       },
     );
   }
@@ -63,7 +63,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  String? groupName;
+  LazyChartGroup? selectedGroup;
   ChartData? chartData;
   bool showGovernment = true;
   bool governmentDelay = true;
@@ -73,31 +73,44 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
+    _init();
+  }
+
+  void _init() {
     // e.g. /de/arbeitslosen-quote
     final url = getBrowserUrl();
     if (url != null) {
-      final chartKey = url.replaceAll('/de/', '');
-      final group = chartGroups.firstWhereOrNull(
-        (e) => e.chartKeys.keys.contains(chartKey),
-      );
-      if (group != null) {
-        _loadChart(group, chartKey);
+      final urlComponents = url.replaceAll('/de/', '').split('+');
+      if (urlComponents.length == 2) {
+        final groupKey = urlComponents[0];
+        final chartKey = urlComponents[1];
+        final group = chartGroups.firstWhereOrNull((e) => e.key == groupKey);
+        if (group != null) {
+          _loadChart(group, chartKey);
+          return;
+        }
       }
-    } else {
-      _loadChart(chartGroups.first, chartGroups.first.chartKeys.keys.first);
     }
+
+    _loadChart(chartGroups.first, chartGroups.first.chartKeys.keys.first);
+  }
+
+  void _selectGroup(LazyChartGroup group) {
+    setState(() {
+      selectedGroup = group;
+    });
   }
 
   void _loadChart(LazyChartGroup group, String chartKey) async {
     setState(() {
       chartData = null;
-      groupName = group.title;
+      selectedGroup = group;
       governmentDelay = true;
     });
 
     final charts = await group.load();
 
-    setBrowserUrl(url: chartKey);
+    setBrowserUrl(url: '/de/${group.key}+$chartKey');
 
     setState(() {
       chartData = charts.firstWhere((e) => e.key == chartKey);
@@ -114,7 +127,11 @@ class _HomePageState extends State<HomePage> {
             children: [
               const SizedBox(height: 50),
               Center(
-                child: Text('PolitikChart', style: Theme.of(context).textTheme.headlineLarge),
+                child: Text(
+                  'PolitikChart',
+                  style: Theme.of(context).textTheme.headlineLarge,
+                  textAlign: TextAlign.center,
+                ),
               ),
               SizedBox(
                 height: switch (displaySize.height) {
@@ -131,19 +148,21 @@ class _HomePageState extends State<HomePage> {
                       padding: const EdgeInsets.only(top: 20, right: 20, bottom: 20),
                       child: Column(
                         children: [
-                          Text('${groupName ?? ''}: ${chartData?.name ?? ''}', style: Theme.of(context).textTheme.titleLarge),
-                          if (chartData?.description != null)
-                            Padding(
-                              padding: const EdgeInsets.only(top: 4),
-                              child: Text(chartData!.description!, style: Theme.of(context).textTheme.titleSmall),
-                            ),
+                          Text(
+                            '${selectedGroup?.label ?? ''}: ${chartData?.name ?? ''}',
+                            style: Theme.of(context).textTheme.titleLarge,
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            chartData?.description ?? '...',
+                            style: Theme.of(context).textTheme.titleSmall,
+                            textAlign: TextAlign.center,
+                          ),
                           const SizedBox(height: 20),
                           SizedBox(
                             width: 1200,
-                            height: switch (displaySize.width) {
-                              < 800 => 650,
-                              _ => 600,
-                            },
+                            height: 0.5 * displaySize.height,
                             child: chartData == null
                                 ? Center(
                                     child: const CircularProgressIndicator(),
@@ -206,33 +225,62 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ),
-              for (final group in chartGroups) ...[
-                const SizedBox(height: 50),
-                Center(
-                  child: Text(group.title, style: Theme.of(context).textTheme.titleLarge),
-                ),
-                Center(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 1100),
-                    child: Wrap(
+              const SizedBox(height: 20),
+              Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 1200),
+                  child: Card(
+                    elevation: 5,
+                    child: Column(
                       children: [
-                        for (final chart in group.chartKeys.entries)
-                          Padding(
-                            padding: const EdgeInsets.all(8),
-                            child: TextButton(
-                              style: FilledButton.styleFrom(
-                                backgroundColor: chart.key == chartData?.key ? Theme.of(context).colorScheme.primary : null,
-                                foregroundColor: chart.key == chartData?.key ? Theme.of(context).colorScheme.onPrimary : null,
+                        const SizedBox(height: 10),
+                        Text(t.category, style: Theme.of(context).textTheme.titleSmall),
+                        Wrap(
+                          children: [
+                            for (final group in chartGroups)
+                              Padding(
+                                padding: const EdgeInsets.all(8),
+                                child: TextButton(
+                                  style: FilledButton.styleFrom(
+                                    backgroundColor: group == selectedGroup ? Theme.of(context).colorScheme.primary : null,
+                                    foregroundColor: group == selectedGroup ? Theme.of(context).colorScheme.onPrimary : null,
+                                  ),
+                                  onPressed: () => _selectGroup(group),
+                                  child: Text(group.label),
+                                ),
                               ),
-                              onPressed: () => _loadChart(group, chart.key),
-                              child: Text(chart.value),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                        Text(t.statistics(category: selectedGroup?.label ?? ''), style: Theme.of(context).textTheme.titleSmall),
+                        if (selectedGroup != null)
+                          Center(
+                            child: ConstrainedBox(
+                              constraints: const BoxConstraints(maxWidth: 1100),
+                              child: Wrap(
+                                children: [
+                                  for (final chart in selectedGroup!.chartKeys.entries)
+                                    Padding(
+                                      padding: const EdgeInsets.all(8),
+                                      child: TextButton(
+                                        style: FilledButton.styleFrom(
+                                          backgroundColor: chart.key == chartData?.key ? Theme.of(context).colorScheme.primary : null,
+                                          foregroundColor: chart.key == chartData?.key ? Theme.of(context).colorScheme.onPrimary : null,
+                                        ),
+                                        onPressed: () => _loadChart(selectedGroup!, chart.key),
+                                        child: Text(chart.value),
+                                      ),
+                                    ),
+                                ],
+                              ),
                             ),
                           ),
+                        const SizedBox(height: 10),
                       ],
                     ),
                   ),
                 ),
-              ],
+              ),
               const SizedBox(height: 50),
               Center(
                 child: TextButton.icon(
@@ -264,13 +312,4 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-}
-
-extension on LazyChartGroup {
-  String get title => switch (key) {
-        'crime' => 'Kriminalität',
-        'economy' => 'Wirtschaft',
-        'energy' => 'Energie',
-        _ => key,
-      };
 }

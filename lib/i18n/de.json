@@ -1,5 +1,7 @@
 {
   "showGovernment": "Regierung anzeigen",
   "animations": "Animationen",
-  "sources": "Quellen"
+  "sources": "Quellen",
+  "category": "Kategorie",
+  "statistics": "Statistiken zu $category"
 }

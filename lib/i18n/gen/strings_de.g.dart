@@ -36,6 +36,8 @@ class TranslationsDe implements Translations {
 	@override String get showGovernment => 'Regierung anzeigen';
 	@override String get animations => 'Animationen';
 	@override String get sources => 'Quellen';
+	@override String get category => 'Kategorie';
+	@override String statistics({required Object category}) => 'Statistiken zu ${category}';
 }
 
 /// Flat map(s) containing all translations.
@@ -46,6 +48,8 @@ extension on TranslationsDe {
 			case 'showGovernment': return 'Regierung anzeigen';
 			case 'animations': return 'Animationen';
 			case 'sources': return 'Quellen';
+			case 'category': return 'Kategorie';
+			case 'statistics': return ({required Object category}) => 'Statistiken zu ${category}';
 			default: return null;
 		}
 	}

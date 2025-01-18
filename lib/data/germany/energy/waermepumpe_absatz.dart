@@ -1,7 +1,7 @@
 import 'package:politikchart/model/chart.dart';
 
 const chartData = ChartData(
-  key: 'waermepumpe_absatz',
+  key: 'waermepumpe-absatz',
   name: 'Wärmepumpe Absatz',
   description: 'Anzahl der verkauften Wärmepumpen',
   sources: [
