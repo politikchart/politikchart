@@ -23,8 +23,14 @@ dependencies:
 
 dev_dependencies:
   flutter_lints: ^5.0.0
+  flutter_native_splash: 2.4.4
   flutter_test:
     sdk: flutter
 
 flutter:
   uses-material-design: true
+
+flutter_native_splash:
+  color: "#ffffff"
+  image: assets/img/splash.png
+  web: true
