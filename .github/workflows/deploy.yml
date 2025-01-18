@@ -28,7 +28,7 @@ jobs:
         run: echo "version=v$(date +'%Y%m%d%H%M')" >> $GITHUB_ENV
 
       - name: Build
-        run: flutter build web --wasm --base-href="/${{ env.version }}/"
+        run: flutter build web --wasm --base-href="/${{ env.version }}/" --dart-define IMPRINT_STREET="${{ secrets.IMPRINT_STREET }}" --dart-define IMPRINT_CITY="${{ secrets.IMPRINT_CITY }}"
 
       - name: Create version directory
         run: mkdir -p build/web/${{ env.version }}

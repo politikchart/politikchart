@@ -6,6 +6,7 @@ import 'package:politikchart/data/germany/government.dart';
 import 'package:politikchart/i18n/gen/strings.g.dart';
 import 'package:politikchart/model/chart.dart';
 import 'package:politikchart/model/party.dart';
+import 'package:politikchart/pages/imprint.dart';
 import 'package:politikchart/utils/link.dart';
 import 'package:politikchart/utils/url.dart';
 import 'package:politikchart/widgets/chart/chart.dart';
@@ -52,6 +53,7 @@ class MyApp extends StatelessWidget {
       routes: {
         for (final group in chartGroups)
           for (final chart in group.chartKeys.keys) '/de/${group.key}/$chart': (context) => HomePage(),
+        '/imprint': (context) => const ImprintPage(),
       },
     );
   }
@@ -284,12 +286,28 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               const SizedBox(height: 50),
-              Center(
-                child: TextButton.icon(
-                  onPressed: () => openLink('https://github.com/politikchart/politikchart'),
-                  icon: const Icon(Icons.open_in_new),
-                  label: Text('Github'),
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextButton.icon(
+                    onPressed: () => openLink('https://github.com/politikchart/politikchart'),
+                    icon: const Icon(Icons.open_in_new),
+                    label: Text('Github'),
+                  ),
+                  const SizedBox(width: 20),
+                  TextButton.icon(
+                    onPressed: () async {
+                      Navigator.of(context).pushNamed('/imprint'); // ignore: unawaited_futures
+
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        // remove base url modification
+                        setBrowserUrl(url: '/imprint');
+                      });
+                    },
+                    icon: const Icon(Icons.info),
+                    label: Text('Impressum'),
+                  ),
+                ],
               ),
               if (displaySize.width <= 800)
                 Padding(
