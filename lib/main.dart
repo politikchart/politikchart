@@ -67,8 +67,12 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  LazyChartGroup? selectedGroup;
+  LazyChartGroup? chartGroup;
   ChartData? chartData;
+
+  /// Selected group of charts.
+  /// May be different from [chartGroup] if the user selects a different group without selecting a chart.
+  LazyChartGroup? selectedGroup;
   bool showGovernment = true;
   bool governmentDelay = true;
   bool animate = true;
@@ -109,6 +113,7 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       chartData = null;
       selectedGroup = group;
+      chartGroup = group;
       governmentDelay = true;
     });
 
@@ -153,7 +158,7 @@ class _HomePageState extends State<HomePage> {
                       child: Column(
                         children: [
                           Text(
-                            '${selectedGroup?.label ?? ''}: ${chartData?.name ?? ''}',
+                            '${chartGroup?.label ?? ''}: ${chartData?.name ?? ''}',
                             style: Theme.of(context).textTheme.titleLarge,
                             textAlign: TextAlign.center,
                           ),
