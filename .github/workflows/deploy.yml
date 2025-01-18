@@ -36,7 +36,7 @@ jobs:
       - name: Move build files to version directory
         run: |
           shopt -s extglob
-          mv build/web/!(${{ env.version }}|index.html) build/web/${{ env.version }}
+          mv build/web/!(${{ env.version }}|index.html|_headers) build/web/${{ env.version }}
 
       - name: Upload Build
         uses: actions/upload-artifact@v4
