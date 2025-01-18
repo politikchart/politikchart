@@ -1,14 +1,13 @@
-// ignore: avoid_web_libraries_in_flutter
-import 'dart:html' as html;
+import 'package:web/web.dart';
 
 void setBrowserUrl({
   required String url,
 }) {
-  html.window.history.pushState(null, 'home', '/#$url');
+  window.history.pushState(null, 'home', '/#$url');
 }
 
 String? getBrowserUrl() {
-  final hash = html.window.location.hash;
+  final hash = window.location.hash;
   if (hash.isEmpty) {
     return null;
   }

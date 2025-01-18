@@ -14,6 +14,8 @@ import 'package:politikchart/widgets/input/labeled_checkbox.dart';
 import 'package:politikchart/widgets/input/theme_selector.dart';
 import 'package:refena_flutter/refena_flutter.dart';
 
+const _webassembly = bool.fromEnvironment('dart.tool.dart2wasm');
+
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   LocaleSettings.useDeviceLocale(); // ignore: discarded_futures
@@ -294,6 +296,16 @@ class _HomePageState extends State<HomePage> {
                   padding: const EdgeInsets.only(top: 20),
                   child: Center(
                     child: const ThemeSelector(),
+                  ),
+                ),
+              if (_webassembly)
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 20),
+                    child: Text(
+                      'Running on WebAssembly',
+                      style: Theme.of(context).textTheme.titleSmall,
+                    ),
                   ),
                 ),
               const SizedBox(height: 50),
