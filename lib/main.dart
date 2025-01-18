@@ -51,7 +51,7 @@ class MyApp extends StatelessWidget {
       home: const HomePage(),
       routes: {
         for (final group in chartGroups)
-          for (final chart in group.chartKeys.keys) '/de/${group.key}+$chart': (context) => HomePage(),
+          for (final chart in group.chartKeys.keys) '/de/${group.key}/$chart': (context) => HomePage(),
       },
     );
   }
@@ -82,7 +82,7 @@ class _HomePageState extends State<HomePage> {
     // e.g. /de/arbeitslosen-quote
     final url = getBrowserUrl();
     if (url != null) {
-      final urlComponents = url.replaceAll('/de/', '').split('+');
+      final urlComponents = url.replaceAll('/de/', '').split('/');
       if (urlComponents.length == 2) {
         final groupKey = urlComponents[0];
         final chartKey = urlComponents[1];
@@ -112,7 +112,7 @@ class _HomePageState extends State<HomePage> {
 
     final charts = await group.load();
 
-    setBrowserUrl(url: '/de/${group.key}+$chartKey');
+    setBrowserUrl(url: '/de/${group.key}/$chartKey');
 
     setState(() {
       chartData = charts.firstWhere((e) => e.key == chartKey);
