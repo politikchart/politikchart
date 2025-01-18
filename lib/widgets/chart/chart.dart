@@ -332,17 +332,26 @@ class _ChartState extends State<Chart> {
               bottom: padBottom + 1,
               width: widthPerBar,
               height: maxBarHeight,
-              child: MouseRegion(
-                hitTestBehavior: HitTestBehavior.translucent,
-                onEnter: (_) {
+              child: InkWell(
+                mouseCursor: SystemMouseCursors.basic,
+                splashFactory: NoSplash.splashFactory,
+                hoverColor: Colors.transparent,
+                highlightColor: Colors.transparent,
+                onTap: () {
                   setState(() {
-                    selectedIndex = index;
+                    selectedIndex = selectedIndex == index ? null : index;
                   });
                 },
-                onExit: (_) {
-                  setState(() {
-                    selectedIndex = null;
-                  });
+                onHover: (hover) {
+                  if (hover) {
+                    setState(() {
+                      selectedIndex = index;
+                    });
+                  } else {
+                    setState(() {
+                      selectedIndex = null;
+                    });
+                  }
                 },
               ),
             );
